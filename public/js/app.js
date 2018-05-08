@@ -31,7 +31,7 @@ function getMyDestinations(callbackFn) {
 
 function displayMyDestinations(data) {
     for (i in data.destinations) {
-        $('.container').append(`<div class="card dest-card card-shadow hawaii-card i${data.destinations[i].id}"><div class="close-card-button hide-me"><a href="#"><i class="fa fa-times-circle"></i></a></div><h3 contenteditable="true">${data.destinations[i].name}</h3><ul class="activitiesList"></ul></div>`);
+        $('.container').append(`<div class="card dest-card shadow hawaii-card i${data.destinations[i].id}"><div class="close-card-button hide-me"><a href="#"><i class="fa fa-times-circle"></i></a></div><h3 contenteditable="true">${data.destinations[i].name}</h3><ul class="activitiesList"></ul></div>`);
         $(data.destinations[i].activities).each(function (activity) {
             let thisDestination = `.i${data.destinations[i].id}`;
             $(thisDestination).append(`<li>${data.destinations[i].activities[activity]}</li>`);
@@ -43,7 +43,6 @@ function displayMyDestinations(data) {
 function getAndDisplayMyDestinations() {
     getMyDestinations(displayMyDestinations);
 }
-
 $(function () {
     getAndDisplayMyDestinations();
 })
@@ -59,4 +58,13 @@ $(".close-card-button").on("click", function (e) {
     e.preventDefault();
     $(".close-card-button, .complete-card-button").addClass("hide-me");
     $(".card-open").removeClass("card-open");
+});
+
+$(".complete-card-button").on("click", function () {
+    $(".card-open").children().hide();
+    $(".card-open").append(`<h3>Publish your destination</h3><div class="close-card-button"><a href="#"><i class="fa fa-times-circle"></i></a></div><p>Great job! Now add your photos and share your adventure!</p><div class="pending-uploads"></div><div class="add-button-container shadow"><span class="add-button">+</span></div>`);
+});
+
+$(".complete-cardbutton add-button").on("click", function () {
+    // $(".pending-uploads");
 });
