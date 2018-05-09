@@ -3,20 +3,75 @@ body {
     background-color: #3F51B5;
     font-family: Roboto, sans-serif;
     color: #fff;
+    margin: 0;
 }
+
 .user-menu {
     float: right;
+    padding: 10px;
 }
 
 .user-menu a {
     color: white;
     font-family: Roboto, sans-serif;
 }
-#hero-container {
-    height: 500px;
+
+header {
+    position: relative;
+    height: 400px;
+    background: lightpink;
+    overflow: hidden;
 }
+
+#hero-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    margin-left: 75px;
+}
+
 .h1 {
     font-family: Raleway, Roboto, sans-serif;
     font-weight: 700;
     font-size: 2em;
+}
+
+h2 {
+    margin: 1.5em auto;
+    padding-left: 75px;
+}
+
+.dest-section {}
+
+.public-dest {
+    margin: 25px auto;
+    background: #000;
+    height: 150px;
+    position: relative;
+    overflow: hidden;
+}
+
+.dest-gradient {
+    position: absolute;
+    height: 150px;
+    width: 445px;
+    background: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 62%, rgba(0, 0, 0, 0.7) 75%, rgba(0, 0, 0, 0) 100%);
+}
+
+.dest-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    margin-left: 75px;
+}
+
+.dest-img img {
+    height: 150px;
+    float: right;
+    margin-left: 30px;
+    margin: 0;
 }
