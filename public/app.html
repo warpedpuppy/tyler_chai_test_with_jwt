@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Destination Diary: My Destinations</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <span>
+                <i class="fa fa-suitcase"></i> My Destination Diary</span>
+        </header>
+        <div class="card new-dest-card shadow">
+            <div class="close-card-button hide-me">
+                <a href="#">
+                    <i class="fa fa-times-circle"></i>
+                </a>
+            </div>
+            <div class="complete-card-button hide-me">
+                <button>Complete</button>
+            </div>
+            <h3 contenteditable="true" placeholder="Where would you like to go!?"></h3>
+            <ul class="activitiesList">
+                <li contenteditable="true" placeholder="What should we do there?"></li>
+                <li contenteditable="true" placeholder="Hint: Type in the placeholders above to start creating your first destination. When you're done, click enter!"></li>
+                <li contenteditable="true" placeholder="Example: Fly a kite!!"></li>
+            </ul>
+            <div class="complete-card-button">
+                <a href="#">
+                    <i class="fa check-circle"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

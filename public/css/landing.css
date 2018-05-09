@@ -1,0 +1,22 @@
+body {
+    background: url('') repeat;
+    background-color: #3F51B5;
+    font-family: Roboto, sans-serif;
+    color: #fff;
+}
+.user-menu {
+    float: right;
+}
+
+.user-menu a {
+    color: white;
+    font-family: Roboto, sans-serif;
+}
+#hero-container {
+    height: 500px;
+}
+.h1 {
+    font-family: Raleway, Roboto, sans-serif;
+    font-weight: 700;
+    font-size: 2em;
+}
