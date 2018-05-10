@@ -29,12 +29,27 @@ function getMyDestinations(callbackFn) {
 
 // why don't these have semicolons but the one above does
 
+function createCard(id, name) {
+    return `
+    <div class="card dest-card shadow hawaii-card i${id}">
+        <div class="close-card-button hide-me">
+            <a href="#"><i class="fa fa-times-circle"></i></a>
+        </div>
+        <h3 contenteditable="true">${name}</h3>
+        <ul class="activitiesList"></ul>
+        <div class="complete-card-button">
+            <a href="#"><i class="fa check-circle"></i></a>
+        </div>
+    </div>`
+}
+
 function displayMyDestinations(data) {
-    for (i in data.destinations) {
-        $('.container').append(`<div class="card dest-card shadow hawaii-card i${data.destinations[i].id}"><div class="close-card-button hide-me"><a href="#"><i class="fa fa-times-circle"></i></a></div><h3 contenteditable="true">${data.destinations[i].name}</h3><ul class="activitiesList"></ul></div>`);
-        $(data.destinations[i].activities).each(function (activity) {
-            let thisDestination = `.i${data.destinations[i].id}`;
-            $(thisDestination).append(`<li>${data.destinations[i].activities[activity]}</li>`);
+    for (i of data.destinations) {
+        $('.container').append(createCard(i.id, i.name));
+        console.log(i);
+        $(i.activities).each(function (activity) {
+            let thisDestination = `.i${i.id}`;
+            $(thisDestination).append(`<li>${i.activities[activity]}</li>`);
         });
 
     }
@@ -46,25 +61,45 @@ function getAndDisplayMyDestinations() {
 $(function () {
     getAndDisplayMyDestinations();
 })
+// Open the card on click
 
-$(".card").on("click", function (e) {
+$("body").on("click", ".card", function (e) {
     e.preventDefault();
     $(this).addClass("card-open").removeClass("card");
-    $(".close-card-button, .complete-card-button").removeClass("hide-me")
+    $(".close-card-button, .complete-card-button").removeClass("hide-me");
     $(".card, .h1").addClass("hide-me");
 });
 
-$(".close-card-button").on("click", function (e) {
+// Close the card when user clicks the X
+
+$("body").on("click", ".close-card-button", function (e) {
     e.preventDefault();
     $(".close-card-button, .complete-card-button").addClass("hide-me");
-    $(".card-open").removeClass("card-open");
+    $(".card-open").removeClass("card-open").addClass("card");
+    $(".card").removeClass("hide-me");
 });
 
-$(".complete-card-button").on("click", function () {
+function completeCard() {
+    return `
+    <h3>Publish your destination</h3>
+    <div class="close-card-button">
+        <a href="#"><i class="fa fa-times-circle"></i></a>
+    </div>
+    <p>Great job! Now add your photos and share your adventure!</p>
+    <div class="pending-uploads">
+    </div>
+    <div class="add-button-container shadow">
+        <span class="add-button">+</span>
+    </div>`
+}
+
+// Mark the card as complete and allow photo uploads
+
+$("body").on("click", ".complete-card-button", function () {
     $(".card-open").children().hide();
-    $(".card-open").append(`<h3>Publish your destination</h3><div class="close-card-button"><a href="#"><i class="fa fa-times-circle"></i></a></div><p>Great job! Now add your photos and share your adventure!</p><div class="pending-uploads"></div><div class="add-button-container shadow"><span class="add-button">+</span></div>`);
+    $(".card-open").append(completeCard());
 });
 
-$(".complete-cardbutton add-button").on("click", function () {
+$("body").on("click", ".complete-cardbutton add-button", function () {
     // $(".pending-uploads");
 });
