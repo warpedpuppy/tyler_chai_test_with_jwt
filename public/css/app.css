@@ -29,6 +29,10 @@ header {
     width: 100%;
 }
 
+.hide-me {
+    display: none;
+}
+
 h1 {
     color: white;
     font-variant: small-caps;
@@ -114,10 +118,6 @@ h1 {
     border-radius: 7px;
     font-size: 2em;
     padding: 30px;
-}
-
-.hide-me {
-    display: none;
 }
 
 .close-card-button {

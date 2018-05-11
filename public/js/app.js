@@ -35,18 +35,22 @@ function createCard(id, name) {
         <div class="close-card-button hide-me">
             <a href="#"><i class="fa fa-times-circle"></i></a>
         </div>
+        <div class="complete-card-button hide-me">
+            <button>Complete</button>
+        </div>
         <h3 contenteditable="true">${name}</h3>
         <ul class="activitiesList"></ul>
-        <div class="complete-card-button">
-            <a href="#"><i class="fa check-circle"></i></a>
-        </div>
+        <div class="complete-card-button hide-me">
+        <a href="#">
+            <i class="fa check-circle"></i>
+        </a>
+    </div>
     </div>`
 }
 
 function displayMyDestinations(data) {
     for (i of data.destinations) {
         $('.container').append(createCard(i.id, i.name));
-        console.log(i);
         $(i.activities).each(function (activity) {
             let thisDestination = `.i${i.id}`;
             $(thisDestination).append(`<li>${i.activities[activity]}</li>`);
