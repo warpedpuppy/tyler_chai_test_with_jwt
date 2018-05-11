@@ -129,7 +129,7 @@ h1 {
 .close-card-button>a,
 .close-card-button>a:visited,
 .close-card-buttona>a:active {
-    color: white;
+    color: darkslategray;
 }
 
 .close-card-button>a:hover {

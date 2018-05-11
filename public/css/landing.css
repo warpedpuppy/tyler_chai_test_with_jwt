@@ -90,7 +90,7 @@ h2 {
     margin: 0;
     border-radius: 7px;
     font-size: 2em;
-    padding: 30px;
+    padding: 50px;
     padding-bottom: 50px;
 }
 .close-card-button {
@@ -99,8 +99,32 @@ h2 {
     right: 15px;
 }
 
+.close-card-button>a,
+.close-card-button>a:visited,
+.close-card-buttona>a:active {
+    color: darkslategrey;
+}
+
+.close-card-button>a,
+.close-card-button>a:visited,
+.close-card-buttona>a:active {
+    color: darkslategrey;
+}
+
 .login-menu {
     text-align: center;
+}
+
+.login-menu-active>a,
+.login-menu-active>a:visited,
+.login-menu-active>a:active  {
+    text-decoration: none;
+}
+
+.login-menu-passive>a,
+.login-menu-passive>a:visited,
+.login-menu-passive>a:active  {
+    text-decoration: underline;
 }
 
 button {
