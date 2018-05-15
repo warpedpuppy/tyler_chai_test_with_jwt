@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Raleway:700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 
 <body>
@@ -71,14 +71,18 @@
                 <form id="login-form">
                     <label for="username">Username</label><input id="username" type="text">
                     <label for="password">Password</label><input id="password" type="password">
-                    <button class="sign-in-button">Sign in</button>
+                    <button>Sign in</button>
                 </form>
                 <form id="register-form" class="hide-me">
                     <label for="name">Name</label><input id="new-name" type="text">                    
                     <label for="username">Username</label><input id="new-username" type="text">
                     <label for="password">Password</label><input id="new-password" type="password">
-                    <button class="sign-in-button">Register</button>
+                    <button>Register</button>
                 </form>
+                <div id="register-success" class="hide-me">
+                    <p>Your account was created successfully.</p>
+                    <button>Log In</button>
+                </div>
             </div>
     </main>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

@@ -160,3 +160,6 @@ input {
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }
+#register-success p {
+    text-align: center;
+}
