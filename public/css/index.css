@@ -89,7 +89,7 @@ h2 {
     width: 70%;
     margin: 0;
     border-radius: 7px;
-    font-size: 2em;
+    font-size: 1.5em;
     padding: 50px;
     padding-bottom: 50px;
 }
@@ -159,6 +159,12 @@ input {
     box-sizing: content-box;
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
+}
+#register-error {
+    height: 1em;
+    font-size: 1em;
+    color: red;
+    text-align: center;
 }
 #register-success p {
     text-align: center;

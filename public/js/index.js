@@ -35,22 +35,24 @@ $("#register-form").submit(function (e) {
     let newUserObj = {
         "username": $("#new-name").val(),
         "password": $("#new-password").val(),
-        "name": $("#new-name").val(),
+        "name": $("#new-name").val()
 };
+
     $.ajax({
         type: "POST",
         url: "/api/users",
         dataType: "json",
         contentType : 'application/json',
         data: JSON.stringify(newUserObj),
-        success: function(data){
+        success: function(data, textStatus, jqXHR){
             console.log("User created.");
             $("#register-form input").val("");
             $("#register-form").addClass("hide-me");
             $("#register-success").removeClass("hide-me");
+            console.log(jqXHR.status);
         },
-        error: function(error) {
-            console.error(error);
+        error: function(data, textStatus, errorThrown) {
+            $("#register-error").html(`${data.responseJSON.location} - ${data.responseJSON.message}`);
         }
     })
 });

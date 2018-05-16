@@ -101,15 +101,15 @@ router.post('/', jsonParser, (req, res) => {
     return User.find({ username })
         .count()
         .then(count => {
-            // if (count > 0) {
-            //     // There is an existing user with the same username
-            //     return Promise.reject({
-            //         code: 422,
-            //         reason: 'ValidationError',
-            //         message: 'Username already taken',
-            //         location: 'username'
-            //     });
-            // }
+            if (count > 0) {
+                // There is an existing user with the same username
+                return Promise.reject({
+                    code: 422,
+                    reason: 'ValidationError',
+                    message: 'Username already taken',
+                    location: 'username'
+                });
+            }
             // If there is no existing user, hash the password
             return User.hashPassword(password);
         })
