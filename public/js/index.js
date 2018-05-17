@@ -44,14 +44,12 @@ $("#register-form").submit(function (e) {
         dataType: "json",
         contentType : 'application/json',
         data: JSON.stringify(newUserObj),
-        success: function(data, textStatus, jqXHR){
-            console.log("User created.");
+        success: function(data){
             $("#register-form input").val("");
             $("#register-form").addClass("hide-me");
             $("#register-success").removeClass("hide-me");
-            console.log(jqXHR.status);
         },
-        error: function(data, textStatus, errorThrown) {
+        error: function(data) {
             $("#register-error").html(`${data.responseJSON.location} - ${data.responseJSON.message}`);
         }
     })
