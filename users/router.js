@@ -44,7 +44,7 @@ router.post('/', jsonParser, (req, res) => {
     // trimming them and expecting the user to understand.
     // We'll silently trim the other fields, because they aren't credentials used
     // to log in, so it's less of a problem.
-    const explicityTrimmedFields = ['username', 'password'];
+    const explicityTrimmedFields = ['name', 'username', 'password'];
     const nonTrimmedField = explicityTrimmedFields.find(
         field => req.body[field].trim() !== req.body[field]
     );
