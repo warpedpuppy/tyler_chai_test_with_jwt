@@ -3,20 +3,20 @@ let MOCK_DESTINATIONS = {
         {
             "id": "111111",
             "name": "Hawaii",
-            "completed": "no",
+            "complete": "no",
             "activities": ["Go surfing", "Meet Lilo & Stitch", "Fly over an active volcano"]
         },
         {
             "id": "222222",
             "name": "New York City",
-            "completed": "no",
+            "complete": "no",
             "activities": ["See Times Square", "Climb the Statue of Liberty", "Walk through Central Park"]
 
         },
         {
             "id": "333333",
             "name": "Tokyo",
-            "completed": "no",
+            "complete": "no",
             "activities": ["Photo with Mickey at Tokyo Disneyland", "Shop in the Ginza District", "Meet a Geisha at Omotenashi Nihonbashi"]
 
         }
