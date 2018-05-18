@@ -160,7 +160,7 @@ input {
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }
-#register-error {
+.error {
     height: 1em;
     font-size: 1em;
     color: red;

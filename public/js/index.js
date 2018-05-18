@@ -6,6 +6,7 @@ $("body").on("click", ".login-link", function (e) {
 $("body").on("click", ".close-card-button", function (e) {
     e.preventDefault();
     $(".login-modal").addClass("hide-me");
+    $(".login-modal input").val("");
 });
 
 $("body").on("click", ".register-tab", function (e) {
@@ -32,7 +33,7 @@ $("body").on("click", "#register-success > button", function(e) {
 
 $("#register-form").submit(function (e) {
     e.preventDefault();
-    let newUserObj = {
+    let newUser = {
         "username": $("#new-name").val(),
         "password": $("#new-password").val(),
         "name": $("#new-name").val()
@@ -42,17 +43,41 @@ $("#register-form").submit(function (e) {
         type: "POST",
         url: "/api/users",
         dataType: "json",
-        contentType : 'application/json',
-        data: JSON.stringify(newUserObj),
+        contentType : "application/json",
+        data: JSON.stringify(newUser),
         success: function(data, textStatus, jqXHR){
             console.log("User created.");
             $("#register-form input").val("");
             $("#register-form").addClass("hide-me");
             $("#register-success").removeClass("hide-me");
-            console.log(jqXHR.status);
         },
         error: function(data, textStatus, errorThrown) {
             $("#register-error").html(`${data.responseJSON.location} - ${data.responseJSON.message}`);
         }
-    })
+    });
+
 });
+
+$("#login-form").submit(function(e) {
+    e.preventDefault();
+    $("#login-error").html(``);
+    let aUser = {
+        "username": $("#username").val(),
+        "password": $("#password").val()
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "/api/auth/login",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(aUser),
+        success: function(data, textStatus, jqXHR){
+            console.log("User authenticated.");
+            console.log(data.authToken);
+        },
+        error: function(data, textStatus, errorThrown) {
+            $("#login-error").html(`Incorrect username or password`);
+        }
+    })
+})
