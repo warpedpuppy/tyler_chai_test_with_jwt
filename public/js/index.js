@@ -33,7 +33,7 @@ $("body").on("click", "#register-success > button", function(e) {
 $("#register-form").submit(function (e) {
     e.preventDefault();
     let newUserObj = {
-        "username": $("#new-name").val(),
+        "username": $("#new-username").val(),
         "password": $("#new-password").val(),
         "name": $("#new-name").val()
 };
