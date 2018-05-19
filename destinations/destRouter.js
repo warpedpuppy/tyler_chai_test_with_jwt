@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { Destination } = require('./destModel');
+let { Destination } = require('./destModel');
 
 const destRouter = express.Router();
 
@@ -25,4 +25,4 @@ destRouter.get('/', (req, res) => {
         .catch(err => res.status(500).json({ message: 'Internal server error'}));
 });
 
-module.exports = { destRouter };
+module.exports = destRouter;

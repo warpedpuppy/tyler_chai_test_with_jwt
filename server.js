@@ -7,7 +7,7 @@ const { router: destRouter } = require('./destinations');
 const mongoose = require('mongoose');
 const passport = require('passport');
 app.use('/api/users/', usersRouter);
-app.use('/api/destinations', destRouter);
+// app.use('/api/destinations', destRouter);
 app.use(express.static('public'));
  
 const { PORT, DATABASE_URL} = require('./config');
