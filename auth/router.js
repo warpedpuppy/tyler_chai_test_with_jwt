@@ -23,8 +23,6 @@ router.post('/login', localAuth, (req, res) => {
    	const authToken = createAuthToken(req.user.serialize());
    	const jwtAuth = passport.authenticate('jwt', { session: false });
      res.json({authToken});
-     $window.sessionStorage.token = authToken;
-     console.log($window.sessionStorage.token);
 });
 
 
@@ -32,6 +30,13 @@ const jwtAuth = passport.authenticate('jwt', {session: false});
 router.post('/refresh', jwtAuth, (req, res) => {
   const authToken = createAuthToken(req.user);
   res.json({authToken});
+});
+
+router.get('/app_protected', jwtAuth, (req, res) => {
+  // const authToken = createAuthToken(req.user);
+  console.log(req.user.username);
+  
+  res.json("authToken");
 });
 
 module.exports = {router};

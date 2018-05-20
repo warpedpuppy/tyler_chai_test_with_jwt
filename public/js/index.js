@@ -7,6 +7,8 @@ $("body").on("click", ".close-card-button", function (e) {
     e.preventDefault();
     $(".login-modal").addClass("hide-me");
     $(".login-modal input").val("");
+    $("#register-success").addClass("hide-me");
+    $("#login-error, #register-error").html("");
 });
 
 $("body").on("click", ".register-tab", function (e) {
@@ -15,6 +17,8 @@ $("body").on("click", ".register-tab", function (e) {
     $("#register-form").removeClass("hide-me");
     $(".register-tab").addClass("login-menu-active").removeClass("login-menu-passive");
     $(".login-tab").removeClass("login-menu-active").addClass("login-menu-passive");
+    $("#register-success").addClass("hide-me");
+
 });
 $("body").on("click", ".login-tab", function (e) {
     e.preventDefault();
@@ -22,6 +26,7 @@ $("body").on("click", ".login-tab", function (e) {
     $("#login-form").removeClass("hide-me");
     $(".login-tab").addClass("login-menu-active").removeClass("login-menu-passive");
     $(".register-tab").removeClass("login-menu-active").addClass("login-menu-passive");
+    $("#register-success").addClass("hide-me");
 });
 $("body").on("click", "#register-success > button", function(e) {
     e.preventDefault();
@@ -64,6 +69,8 @@ $("#login-form").submit(function(e) {
     let aUser = {
         "username": $("#username").val(),
         "password": $("#password").val()
+        // "username": "a",
+        // "password": "aaaaaaaaaa"
     };
 
     $.ajax({
@@ -75,9 +82,17 @@ $("#login-form").submit(function(e) {
         success: function(data, textStatus, jqXHR){
             console.log("User authenticated.");
             console.log(data.authToken);
+            sessionStorageManager("token", data.authToken, true);
         },
         error: function(data, textStatus, errorThrown) {
             $("#login-error").html(`Incorrect username or password`);
         }
     })
+
+    function sessionStorageManager(key, value, check) {
+        sessionStorage.setItem(key, value);
+        if (check) {
+            console.log(sessionStorage.getItem(key));
+        }
+    }
 })
