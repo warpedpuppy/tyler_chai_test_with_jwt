@@ -1,0 +1,142 @@
+.login-modal {
+    background: #fff;
+    color: #000;
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 500px;
+    width: 70%;
+    margin: 0;
+    border-radius: 7px;
+    font-size: 1.5em;
+    padding: 50px;
+    padding-bottom: 50px;
+}
+.close-card-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.close-card-button>a,
+.close-card-button>a:visited,
+.close-card-buttona>a:active {
+    color: darkslategrey;
+}
+
+.close-card-button>a,
+.close-card-button>a:visited,
+.close-card-buttona>a:active {
+    color: darkslategrey;
+}
+
+.login-menu {
+    text-align: center;
+}
+
+.login-menu-active>a,
+.login-menu-active>a:visited,
+.login-menu-active>a:active  {
+    text-decoration: none;
+}
+
+.login-menu-passive>a,
+.login-menu-passive>a:visited,
+.login-menu-passive>a:active  {
+    text-decoration: underline;
+}
+
+button {
+    text-decoration: none;
+    color: #fff;
+    background-color: #F44336;
+    text-align: center;
+    letter-spacing: .5px;
+    border: none;
+    display: inline-block;
+    height: 52px;
+    font-size: .75em;
+    line-height: 22px;
+    padding: 15px 32px;
+    width: 100%;
+    text-transform: uppercase;
+}
+input {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #9e9e9e;
+    border-radius: 0;
+    outline: none;
+    height: 3rem;
+    width: 100%;
+    font-size: 1rem;
+    margin: 0 0 20px 0;
+    padding: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+.error {
+    height: 1em;
+    font-size: 1em;
+    color: red;
+    text-align: center;
+}
+#register-success p {
+    text-align: center;
+}
+
+.card-open {
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 70%;
+    margin: 0;
+    border-radius: 7px;
+    font-size: 2em;
+    padding: 30px;
+}
+
+.close-card-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.close-card-button>a,
+.close-card-button>a:visited,
+.close-card-buttona>a:active {
+    color: darkslategray;
+}
+
+.close-card-button>a:hover {
+    color: #F44336;
+}
+
+button {
+    text-decoration: none;
+    color: #fff;
+    background-color: #F44336;
+    text-align: center;
+    letter-spacing: .5px;
+    border: none;
+    display: inline-block;
+    height: 52px;
+    font-size: .75em;
+    line-height: 22px;
+    padding: 15px 32px;
+    text-transform: uppercase;
+    border-radius: 28px;
+}
+
+.complete-card-button {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}

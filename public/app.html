@@ -9,15 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/login-modal.css">
 </head>
 
 <body>
-    <div class="container">
+    <main role="main" class="container">
         <header>
-            <span>
-                <i class="fa fa-suitcase"></i> My Destination Diary</span>
+            <span><i class="fa fa-suitcase"></i> My Destination Diary</span>
+            <div id="nav-bar">
+                <span class="home-button" aria-label="Home"><a href="/"><i class="fa fa-home" aria-label="Home button" title="Home"></i></a></span><span class="sign-out-button hide-me"> <a href="#"><i class="fa fa-sign-out" aria-label="Sign out button" title="Sign out"></i></a></span>
+            </div>
         </header>
-        <div class="card new-dest-card shadow">
+        <div class="card new-dest-card shadow hide-me">
             <div class="close-card-button hide-me">
                 <a href="#">
                     <i class="fa fa-times-circle"></i>
@@ -38,9 +41,35 @@
                 </a>
             </div>
         </div>
-    </div>
+        <div class="login-modal hide-me">
+                <div class="close-card-button">
+                        <a href="#">
+                            <i class="fa fa-times-circle"></i>
+                        </a>
+                    </div>
+                <p class="login-menu"><span class="login-tab login-menu-active"><a href="#">Login</a></span> | <span class="register-tab login-menu-passive"><a href="#">Register</a></span></p>
+                <form id="login-form">
+                    <label for="username">Username</label><input id="username" type="text">
+                    <label for="password">Password</label><input id="password" type="password">
+                    <button>Sign in</button>
+                    <p id="login-error" class="error"> </p>
+                </form>
+                <form id="register-form" class="hide-me">
+                    <label for="name">Name</label><input id="new-name" type="text">                    
+                    <label for="new-username">Username</label><input id="new-username" type="text">
+                    <label for="password">Password</label><input id="new-password" type="password">
+                    <button>Register</button>
+                    <p id="register-error" class="error"> </p>
+                </form>
+                <div id="register-success" class="hide-me">
+                    <p>Your account was created successfully.</p>
+                    <button>Log In</button>
+                </div>
+            </div>
+        </main>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/login-modal.js"></script>
 </body>
 
 </html>
