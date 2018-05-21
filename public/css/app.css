@@ -24,9 +24,21 @@ header {
     height: 64px;
     padding: 0 32px 0;
     box-sizing: border-box;
-    font-size: 18px;
+    font-size: 1.5em;
     line-height: 64px;
     width: 100%;
+}
+
+#nav-bar {
+    float: right;
+    font-size: 1.5em;
+}
+#nav-bar > span {
+    margin-left: 15px;
+}
+#nav-bar a, #nav-bar a:active, #nav-bar a:hover, #nav-bar a:visited {
+    color: #fff;
+x    
 }
 
 .hide-me {
@@ -105,57 +117,6 @@ h1 {
         width: 25%;
         float: left;
     }
-}
-
-.card-open {
-    position: fixed;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 70%;
-    margin: 0;
-    border-radius: 7px;
-    font-size: 2em;
-    padding: 30px;
-}
-
-.close-card-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-}
-
-.close-card-button>a,
-.close-card-button>a:visited,
-.close-card-buttona>a:active {
-    color: darkslategray;
-}
-
-.close-card-button>a:hover {
-    color: #F44336;
-}
-
-button {
-    text-decoration: none;
-    color: #fff;
-    background-color: #F44336;
-    text-align: center;
-    letter-spacing: .5px;
-    border: none;
-    display: inline-block;
-    height: 52px;
-    font-size: .75em;
-    line-height: 22px;
-    padding: 15px 32px;
-    text-transform: uppercase;
-    border-radius: 28px;
-}
-
-.complete-card-button {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
 }
 
 .add-button-container {

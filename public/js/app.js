@@ -6,14 +6,26 @@ $(function () {
             headers: { 'authorization': `Bearer ${sessionStorage.getItem("token")}` },
             success: function (data) {
                 console.log("Token valid.");
+                loadApp();
             },
             error: function () {
                 console.log("Token invalid!");
+                $(".login-modal").removeClass("hide-me");
             }
         });
     }
 
+    $(".sign-out-button ").on("click", function(e) {
+        e.preventDefault();
+        sessionStorage.setItem("token", "");
+        window.location.replace("/");
+    })
+
     verifyLogin();
+
+function loadApp() {
+
+    $(".new-dest-card, .sign-out-button").removeClass("hide-me");
 
     let MOCK_DESTINATIONS = {
         "destinations": [
@@ -124,4 +136,5 @@ $(function () {
     $("body").on("click", ".complete-cardbutton add-button", function () {
         // $(".pending-uploads");
     });
+};
 });
