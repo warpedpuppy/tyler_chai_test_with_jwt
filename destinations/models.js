@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const DestSchema = mongoose.Schema({
+const DestinationSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -25,7 +25,15 @@ const DestSchema = mongoose.Schema({
     }
 });
 
-const Destination = mongoose.model('Destination', DestSchema);
+DestinationSchema.methods.serialize = function () {
+    return {
+        name: this.name,
+        complete: this.complete || false,
+        activities: this.activities
+    };
+};
+
+const Destination = mongoose.model('Destination', DestinationSchema);
 
 console.log(`This is destinations/models ${typeof Destination} - ${Destination}`)
 

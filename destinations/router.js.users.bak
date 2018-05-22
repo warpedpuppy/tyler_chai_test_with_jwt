@@ -1,18 +1,31 @@
-'use strict'
+'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
 
 let { Destination } = require('./models');
 
-const destinationsRouter = express.Router();
+const destinationRouter = express.Router();
 
 const jsonParser = bodyParser.json();
 
-// Post to create a destination
-destinationsRouter.post('/', jsonParser, (req, res) => {
+// Post to create a new destination
+destinationRouter.post('/', jsonParser, (req, res) => {
     console.log("Destinations endpoint hit!");
-    let { name, complete, activities } = req.body;
+    const requiredFields = ['name', 'complete' ,'activity'];
+    const missingField = requiredFields.find(field => !(field in req.body));
 
+    if (missingField) {
+        return res.status(422).json({
+            code: 422,
+            reason: 'ValidationError',
+            message: 'Cannot be empty',
+            location: missingField
+        });
+    }
+
+    let { name, complete, activity} = req.body;
+    // Destinationname and password come in pre-trimmed, otherwise we throw an error
+    // before this
     name = name.trim();
 
     return Destination.find({ name })
@@ -23,21 +36,22 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
                 return Promise.reject({
                     code: 422,
                     reason: 'ValidationError',
-                    message: 'Destination already exists',
+                    message: 'Destination name already taken',
                     location: 'name'
                 });
             }
+            // If there is no existing destination, hash the password
             return Destination;
         })
-        .then(destination => {
+        .then(hash => {
             return Destination.create({
                 name,
                 complete,
-                activities
+                activity
             });
         })
         .then(destination => {
-            return res.status(201).json(destination.serialize());
+            return res.status(201).json(destination);
         })
         .catch(err => {
             // Forward validation errors on to the client, otherwise give a 500
@@ -49,12 +63,12 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
         });
 });
 
-destinationsRouter.get('/', (req, res) => {
+destinationRouter.get('/', (req, res) => {
     return Destination.find()
-        .then(destinations => res.json(destinations.map(desination => destination.serialize())))
+        .then(destinations => res.json(destinations.map()))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
-console.log(`This is destinations/router ${typeof destinationsRouter} - ${destinationsRouter}`);
+console.log(`This is destinations/router ${typeof destinationRouter} - ${destinationRouter}`);
 
-module.exports = { destinationsRouter };
+module.exports = { destinationRouter };
