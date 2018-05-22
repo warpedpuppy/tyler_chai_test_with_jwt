@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { User } = require('./models');
+let { User } = require('./models');
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const jsonParser = bodyParser.json();
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
-    console.log("endpoint hit!");
+    console.log("Users endpoint hit!");
     const requiredFields = ['username', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -118,7 +118,7 @@ router.post('/', jsonParser, (req, res) => {
                 username,
                 password: hash,
                 name
-                        });
+            });
         })
         .then(user => {
             return res.status(201).json(user.serialize());
@@ -142,5 +142,7 @@ router.get('/', (req, res) => {
         .then(users => res.json(users.map(user => user.serialize())))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
+
+console.log(`This is users/router ${typeof router} - ${router}`);
 
 module.exports = { router };

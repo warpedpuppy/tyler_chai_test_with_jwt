@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-const destSchema = mongoose.Schema({
+const DestSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
@@ -25,6 +25,8 @@ const destSchema = mongoose.Schema({
     }
 });
 
-const Destination = mongoose.model('Destination', destSchema);
+const Destination = mongoose.model('Destination', DestSchema);
+
+console.log(`This is destinations/models ${typeof Destination} - ${Destination}`)
 
 module.exports = { Destination };
