@@ -13,6 +13,10 @@ const DestinationSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    published: {
+        type: Boolean,
+        default: false
+    },
     activities: [] //,
     // user: User.username
 });
@@ -21,6 +25,7 @@ DestinationSchema.methods.serialize = function () {
     return {
         name: this.name,
         complete: this.complete || false,
+        published: this.published,
         activities: this.activities
     };
 };

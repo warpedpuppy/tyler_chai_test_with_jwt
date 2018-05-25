@@ -10,9 +10,7 @@ const jsonParser = bodyParser.json();
 
 // Post to create a destination
 destinationsRouter.post('/', jsonParser, (req, res) => {
-    console.log("Destinations endpoint hit!");
-    let { name, complete, activity } = req.body;
-    let activities = [activity];
+    let { name, complete, published, activities } = req.body;
 
     name = name.trim();
 
@@ -34,6 +32,7 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
             return Destination.create({
                 name,
                 complete,
+                published,
                 activities
             });
         })
@@ -50,9 +49,19 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
         });
 });
 
-destinationsRouter.put('/', jsonParser, (req, res) => {
-    let destination = req.body.name;
-    Destination.findOneAndUpdate({name: destination}, {$push: {activities: req.body.activity}}, {new: true})
+// Update a destination by name on PUT
+
+destinationsRouter.put('/:name', jsonParser, (req, res) => {
+    let { complete, published, activities } = req.body;
+    // return destination.activities.forEach(
+    //     activity => {
+    //         if (req.body.name)
+    //     }
+    // )
+    let destination = req.body;
+    destination.activities.forEach(activity => {
+    })
+    Destination.findOneAndUpdate({name: req.params.name}, {$push: {activities: req.body.activities}}, {new: true})
     .then(dest => {
         // let tempArray = dest.activities.slice();
         // if (req.body.activity) {
@@ -62,11 +71,32 @@ destinationsRouter.put('/', jsonParser, (req, res) => {
         // }
         res.send(dest);
     })
+    .catch(err => res.status(500).json({ message: 'Internal server error'}));
 });
+
+// Remove a destination by name on DELETE
+
+destinationsRouter.delete('/:name', (req, res) => {
+    Destination.findOneAndRemove({name: req.params.name})
+    .then(dest => res.send(`${req.params.name} deleted.`))
+    .catch(err => res.status(500).json({ message: 'Internal server error'}));
+});
+
+// Get one destination by name on GET
+
+destinationsRouter.get('/:name', (req, res) => {
+    return Destination.findOne({name: req.params.name})
+        // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
+        .then(destination => res.json(destination))
+        .catch(err => res.status(500).json({ message: 'Internal server error' }));
+});
+
+// Get all destinations on GET
 
 destinationsRouter.get('/', (req, res) => {
     return Destination.find()
-        .then(destinations => res.json(destinations.map(desination => destination.serialize())))
+        // .then(destinations => res.json(destinations.map(desination => destination.serialize())))
+        .then(destinations => res.json(destinations))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
