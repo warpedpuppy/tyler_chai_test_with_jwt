@@ -13,16 +13,8 @@ const DestinationSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    activities: {
-        activity: {
-            name: {
-                type: String
-            },
-            imgURL: {
-                type: String
-            }
-        }
-    }
+    activities: [] //,
+    // user: User.username
 });
 
 DestinationSchema.methods.serialize = function () {
@@ -34,7 +26,5 @@ DestinationSchema.methods.serialize = function () {
 };
 
 const Destination = mongoose.model('Destination', DestinationSchema);
-
-console.log(`This is destinations/models ${typeof Destination} - ${Destination}`)
 
 module.exports = { Destination };

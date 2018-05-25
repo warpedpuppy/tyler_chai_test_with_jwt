@@ -143,6 +143,4 @@ router.get('/', (req, res) => {
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
-console.log(`This is users/router ${typeof router} - ${router}`);
-
 module.exports = { router };

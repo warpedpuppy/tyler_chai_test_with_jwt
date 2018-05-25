@@ -1,5 +1,5 @@
 'use strict';
 const {Destination} = require('./models');
-const {destinationRouter} = require('./router');
+const {destinationsRouter} = require('./router');
 
-module.exports = {Destination, destinationRouter};
+module.exports = {Destination, destinationsRouter};

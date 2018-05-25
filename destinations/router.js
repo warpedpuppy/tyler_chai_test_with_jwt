@@ -11,7 +11,8 @@ const jsonParser = bodyParser.json();
 // Post to create a destination
 destinationsRouter.post('/', jsonParser, (req, res) => {
     console.log("Destinations endpoint hit!");
-    let { name, complete, activities } = req.body;
+    let { name, complete, activity } = req.body;
+    let activities = [activity];
 
     name = name.trim();
 
@@ -49,12 +50,24 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
         });
 });
 
+destinationsRouter.put('/', jsonParser, (req, res) => {
+    let destination = req.body.name;
+    Destination.findOneAndUpdate({name: destination}, {$push: {activities: req.body.activity}}, {new: true})
+    .then(dest => {
+        // let tempArray = dest.activities.slice();
+        // if (req.body.activity) {
+        //     tempArray.push(req.body.activity);
+        //     let tempObj = 
+        //     Destination.findByIdAndUpdate(req.body._id);
+        // }
+        res.send(dest);
+    })
+});
+
 destinationsRouter.get('/', (req, res) => {
     return Destination.find()
         .then(destinations => res.json(destinations.map(desination => destination.serialize())))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
-
-console.log(`This is destinations/router ${typeof destinationsRouter} - ${destinationsRouter}`);
 
 module.exports = { destinationsRouter };
