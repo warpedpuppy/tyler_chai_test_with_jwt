@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 const DestinationSchema = mongoose.Schema({
+    user: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true,
@@ -17,12 +21,12 @@ const DestinationSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    activities: [] //,
-    // user: User.username
+    activities: []
 });
 
 DestinationSchema.methods.serialize = function () {
     return {
+        user: this.user,
         name: this.name,
         complete: this.complete || false,
         published: this.published,

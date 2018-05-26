@@ -22,7 +22,7 @@ router.use(bodyParser.json());
 router.post('/login', localAuth, (req, res) => {
    	const authToken = createAuthToken(req.user.serialize());
    	const jwtAuth = passport.authenticate('jwt', { session: false });
-     res.json({authToken});
+     res.json({authToken, user: req.user});
 });
 
 
@@ -33,10 +33,9 @@ router.post('/refresh', jwtAuth, (req, res) => {
 });
 
 router.get('/app_protected', jwtAuth, (req, res) => {
-  // const authToken = createAuthToken(req.user);
+  const authToken = createAuthToken(req.user);
   console.log(`${req.user.username} is logged in.`);
-  
-  res.json("authToken");
+  res.json({authToken});
 });
 
 module.exports = {router};

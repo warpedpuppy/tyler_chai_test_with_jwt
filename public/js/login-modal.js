@@ -70,8 +70,6 @@ $("#login-form").submit(function(e) {
     let aUser = {
         "username": $("#username").val(),
         "password": $("#password").val()
-        // "username": "a",
-        // "password": "aaaaaaaaaa"
     };
 
     $.ajax({

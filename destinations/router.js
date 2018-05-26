@@ -6,12 +6,14 @@ let { Destination } = require('./models');
 
 const destinationsRouter = express.Router();
 
+const passport = require('passport');
+const jwtAuth = passport.authenticate('jwt', {session: false});
+
 const jsonParser = bodyParser.json();
 
 // Post to create a destination
-destinationsRouter.post('/', jsonParser, (req, res) => {
+destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
     let { name, complete, published, activities } = req.body;
-
     name = name.trim();
 
     return Destination.find({ name })
@@ -30,6 +32,7 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
         })
         .then(destination => {
             return Destination.create({
+                user: req.user.username,
                 name,
                 complete,
                 published,
@@ -51,7 +54,7 @@ destinationsRouter.post('/', jsonParser, (req, res) => {
 
 // Update a destination by name on PUT
 
-destinationsRouter.put('/:name', jsonParser, (req, res) => {
+destinationsRouter.put('/:name', [jsonParser, jwtAuth], (req, res) => {
     let { complete, published, activities } = req.body;
     // return destination.activities.forEach(
     //     activity => {
@@ -76,7 +79,7 @@ destinationsRouter.put('/:name', jsonParser, (req, res) => {
 
 // Remove a destination by name on DELETE
 
-destinationsRouter.delete('/:name', (req, res) => {
+destinationsRouter.delete('/:name', [jsonParser, jwtAuth], (req, res) => {
     Destination.findOneAndRemove({name: req.params.name})
     .then(dest => res.send(`${req.params.name} deleted.`))
     .catch(err => res.status(500).json({ message: 'Internal server error'}));
@@ -84,7 +87,7 @@ destinationsRouter.delete('/:name', (req, res) => {
 
 // Get one destination by name on GET
 
-destinationsRouter.get('/:name', (req, res) => {
+destinationsRouter.get('/:name', [jsonParser, jwtAuth], (req, res) => {
     return Destination.findOne({name: req.params.name})
         // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
         .then(destination => res.json(destination))
@@ -93,7 +96,7 @@ destinationsRouter.get('/:name', (req, res) => {
 
 // Get all destinations on GET
 
-destinationsRouter.get('/', (req, res) => {
+destinationsRouter.get('/', [jsonParser, jwtAuth], (req, res) => {
     return Destination.find()
         // .then(destinations => res.json(destinations.map(desination => destination.serialize())))
         .then(destinations => res.json(destinations))
