@@ -11,7 +11,6 @@ const DestinationSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true
     },
     complete: {
         type: Boolean,
@@ -30,7 +29,8 @@ DestinationSchema.methods.serialize = function () {
         name: this.name,
         complete: this.complete || false,
         published: this.published,
-        activities: this.activities
+        activities: this.activities,
+        id: this.id
     };
 };
 

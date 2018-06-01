@@ -22,7 +22,7 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
     name = name.trim();
 
 
-    return Destination.find({ name })
+    return Destination.find({ user: req.user.username, name })
         .count()
         .then(count => {
             if (count > 0) {
@@ -30,7 +30,7 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
                 return Promise.reject({
                     code: 422,
                     reason: 'ValidationError',
-                    message: 'Destination already exists',
+                    message: `You already have a destination named ${name}`,
                     location: 'name'
                 });
             }
@@ -61,7 +61,7 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
 // Update a destination by name on PUT
 // Adds activities to an existing destination
 
-destinationsRouter.put('/name/:name', [jsonParser, jwtAuth], (req, res) => {
+destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     let { complete, published, activities } = req.body;
     console.log(req.body);
     // return destination.activities.forEach(
@@ -80,7 +80,7 @@ destinationsRouter.put('/name/:name', [jsonParser, jwtAuth], (req, res) => {
     //         console.log(err); 
     //     } 
     // });
-    Destination.findOneAndUpdate({ name: req.params.name }, { $set: { complete: true, published: req.body.published, activities: req.body.activities } }, { new: true })
+    Destination.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name, complete: req.body.published, published: req.body.published, activities: req.body.activities } }, { new: true })
         .then(dest => {
             // let tempArray = dest.activities.slice();
             // if (req.body.activity) {
@@ -95,20 +95,20 @@ destinationsRouter.put('/name/:name', [jsonParser, jwtAuth], (req, res) => {
 
 // Remove a destination by name on DELETE
 
-destinationsRouter.delete('/name/:name', [jsonParser, jwtAuth], (req, res) => {
-    Destination.findOneAndRemove({ name: req.params.name })
-        .then(dest => res.send(`${req.params.name} deleted.`))
+destinationsRouter.delete('/id/:id', [jsonParser, jwtAuth], (req, res) => {
+    Destination.findOneAndRemove({ _id: req.params.id })
+        .then(dest => res.send(`${req.params.id} deleted.`))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
 // Get one destination by name on GET
 
-destinationsRouter.get('/name/:name', [jsonParser, jwtAuth], (req, res) => {
-    return Destination.findOne({ name: req.params.name })
-        // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
-        .then(destination => res.json(destination))
-        .catch(err => res.status(500).json({ message: 'Internal server error' }));
-});
+// destinationsRouter.get('/:id', [jsonParser, jwtAuth], (req, res) => {
+//     return Destination.findOne({ _id: req.params.id })
+//         // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
+//         .then(destination => res.json(destination))
+//         .catch(err => res.status(500).json({ message: 'Internal server error' }));
+// });
 
 // GET all desetinations for all users
 
@@ -125,8 +125,7 @@ destinationsRouter.get('/all/', [jsonParser, jwtAuth], (req, res) => {
 //GET all published destinations
 
 destinationsRouter.get('/public/', jsonParser, (req, res) => {
-    console.log("Showing all")
-    return Destination.find({})
+    return Destination.find({ published: true })
         // .then(destinations => res.json(destinations.map(desination => destination.serialize())))
         .then(destinations => {
             let tempArray = destinations.map(destination => destination.serialize());
@@ -139,7 +138,7 @@ destinationsRouter.get('/public/', jsonParser, (req, res) => {
 
 destinationsRouter.get('/', [jsonParser, jwtAuth], (req, res) => {
     console.log(req.user)
-    return Destination.find({user: req.user.username})
+    return Destination.find({ user: req.user.username })
         .then(destinations => {
             let tempArray = destinations.map(destination => destination.serialize());
             res.json(tempArray);
