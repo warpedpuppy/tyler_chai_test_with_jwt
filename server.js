@@ -20,7 +20,6 @@ app.use('/api/auth/', authRouter);
 app.use('/api/destinations/', destinationsRouter);
 app.use(express.static('public'));
 
-
 const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // A protected endpoint which needs a valid JWT to access it
