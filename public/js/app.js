@@ -132,6 +132,14 @@ $(function () {
         <a href="#"><i class="fa fa-times-circle"></i></a>
     </div>
     <p>Great job! Now add your photos and share your adventure!</p>
+    <form ref='uploadForm' 
+    id='uploadForm' 
+    action='upload' 
+    method='post' 
+    encType="multipart/form-data">
+      <input type="file" name="filetoupload" />
+      <input type='submit' value='Upload!' />
+    </form>
     <div class="pending-uploads">
     </div>
     <div class="add-button-container shadow">
@@ -156,7 +164,7 @@ $(function () {
         $("body").on("keydown", ".activitiesList", function (e) {
             if (e.keyCode === 13) {
                 e.preventDefault();
-                this.append(newListItem);
+                $(this).append(newListItem);
             }
         });
 
