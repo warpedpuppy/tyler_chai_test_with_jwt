@@ -87,19 +87,19 @@ $(function () {
         function createCard(destination) {
             let activityStr = "";
             destination.activities.forEach(activity => {
-                activityStr += `<li>${activity.name}</li>`;
+                activityStr += `<li contenteditable="true" >${activity.name}</li>`;
             })
             return `
     <div class="card dest-card shadow hawaii-card i${destination.id}">
         <div class="close-card-button hide-me">
             <a href="#"><i class="fa fa-times-circle"></i></a>
         </div>
-        <div class="complete-card-button hide-me">
-            <button>Complete</button>
+        <div class="card-button hide-me">
+            <button class="update-button">Save</button> <button class="complete-button">Complete</button>
         </div>
         <h3 contenteditable="true">${destination.name}</h3>
         <ul class="activitiesList">${activityStr}</ul>
-        <div class="complete-card-button hide-me">
+        <div class="card-button hide-me">
         <a href="#">
             <i class="fa check-circle"></i>
         </a>
@@ -112,7 +112,7 @@ $(function () {
         $("body").on("click", ".card", function (e) {
             e.preventDefault();
             $(this).addClass("card-open").removeClass("card");
-            $(".close-card-button, .complete-card-button").removeClass("hide-me");
+            $(".close-card-button, .card-button").removeClass("hide-me");
             $(".card, .h1").addClass("hide-me");
         });
 
@@ -120,7 +120,7 @@ $(function () {
 
         $("body").on("click", ".close-card-button", function (e) {
             e.preventDefault();
-            $(".close-card-button, .complete-card-button").addClass("hide-me");
+            $(".close-card-button, .card-button").addClass("hide-me");
             $(".card-open").removeClass("card-open").addClass("card");
             $(".card").removeClass("hide-me");
         });
@@ -141,13 +141,62 @@ $(function () {
 
         // Mark the card as complete and allow photo uploads
 
-        $("body").on("click", ".complete-card-button", function () {
+        $("body").on("click", ".complete-button", function () {
             $(".card-open").children().hide();
             $(".card-open").append(completeCard());
         });
 
-        $("body").on("click", ".complete-cardbutton add-button", function () {
-        // $(".pending-uploads");
+        // $("body").on("click", ".card-button add-button", function () {
+        //     // $(".pending-uploads");
+        // });
+
+        // Pressing enter creates a new item
+
+        const newListItem = `<li contenteditable="true"></li>`
+        $("body").on("keydown", ".activitiesList", function (e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                this.append(newListItem);
+            }
         });
-    };
-});
+
+        // Clicking the save button on a new card sends it to the database
+
+
+        $("body").on("click", ".save-button", function (e) {
+            e.preventDefault();
+            let user = 'tyler';
+            let name = $(this).parent().siblings("h3").text();
+            let complete = false;
+            let published = false;
+
+            let activities = [];
+            $(this).parent().siblings('.activitiesList').each(function () {
+                let activity = {};
+                $(this).find('li').each(function () {
+                    var current = $(this).text();
+                    let activity = {
+                        "name": current
+                    }
+                    activities.push(activity);
+                });
+            });
+
+            let newDestination = { user, name, complete, published, activities };
+            console.log(newDestination);
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": "/api/destinations",
+                "method": "POST",
+                "data": newDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                }
+                // .done(
+                    // create a card from the new card and recreate a blank new card
+                // )
+            });
+        });
+    }
+})

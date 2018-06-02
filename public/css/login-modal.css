@@ -130,12 +130,12 @@ button {
     height: 52px;
     font-size: .75em;
     line-height: 22px;
-    padding: 15px 32px;
+    padding: 7px 32px;
     text-transform: uppercase;
     border-radius: 28px;
 }
 
-.complete-card-button {
+.card-button {
     position: absolute;
     bottom: 15px;
     right: 15px;
