@@ -2,15 +2,12 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
-const { router: usersRouter } = require('./users');
 const mongoose = require('mongoose');
 const passport = require('passport');
 
+const { router: usersRouter } = require('./users');
 const { router: authRouter, localStrategy, jwtStrategy } = require('./auth');
-app.use('/api/users/', usersRouter);
-
-app.use(express.static('public'));
- 
+const { destinationsRouter } = require('./destinations');
 const { PORT, DATABASE_URL} = require('./config');
 
 mongoose.Promise = global.Promise;
@@ -20,6 +17,8 @@ passport.use(jwtStrategy);
 
 app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
+app.use('/api/destinations/', destinationsRouter);
+app.use(express.static('public'));
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 

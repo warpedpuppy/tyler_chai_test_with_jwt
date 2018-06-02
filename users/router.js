@@ -2,7 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { User } = require('./models');
+let { User } = require('./models');
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const jsonParser = bodyParser.json();
 
 // Post to register a new user
 router.post('/', jsonParser, (req, res) => {
-    console.log("endpoint hit!");
+    console.log("Users endpoint hit!");
     const requiredFields = ['username', 'password'];
     const missingField = requiredFields.find(field => !(field in req.body));
 
@@ -18,7 +18,7 @@ router.post('/', jsonParser, (req, res) => {
         return res.status(422).json({
             code: 422,
             reason: 'ValidationError',
-            message: 'Missing field',
+            message: 'Cannot be empty',
             location: missingField
         });
     }
@@ -28,14 +28,14 @@ router.post('/', jsonParser, (req, res) => {
         field => field in req.body && typeof req.body[field] !== 'string'
     );
 
-    if (nonStringField) {
-        return res.status(422).json({
-            code: 422,
-            reason: 'ValidationError',
-            message: 'Incorrect field type: expected string',
-            location: nonStringField
-        });
-    }
+    // if (nonStringField) {
+    //     return res.status(422).json({
+    //         code: 422,
+    //         reason: 'ValidationError',
+    //         message: 'Incorrect field type: expected string',
+    //         location: nonStringField
+    //     });
+    // }
 
     // If the username and password aren't trimmed we give an error.  Users might
     // expect that these will work without trimming (i.e. they want the password
@@ -118,7 +118,7 @@ router.post('/', jsonParser, (req, res) => {
                 username,
                 password: hash,
                 name
-                        });
+            });
         })
         .then(user => {
             return res.status(201).json(user.serialize());
