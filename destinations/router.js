@@ -2,6 +2,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const path = require('path');
+const http = require('http');
+const formidable = require('formidable');
+const fs = require('fs');
+
 let { Destination } = require('./models');
 
 const destinationsRouter = express.Router();
@@ -12,6 +17,25 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 const jsonParser = bodyParser.json();
 
 destinationsRouter.use(bodyParser.urlencoded({ extended: true })); destinationsRouter.use(bodyParser.json());
+
+// Image uploader
+
+destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (req, res) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var oldpath = files.file.path;
+        var newpath = `./public/img/destinations/${req.user.username}-${req.params.destTitle}-${files.file.name}`;
+        if (fs.existsSync(newpath)) {
+            res.status(500).send('A file with that name already exists for this destination. Please rename the file!');
+        } else {
+            fs.rename(oldpath, newpath, function (err) {
+                if (err) throw err;
+                res.write('File uploaded and moved!');
+                res.end();
+            });
+        }
+    });
+})
 
 // Post to create a destination
 

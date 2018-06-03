@@ -2,10 +2,10 @@
 require('dotenv').config();
 const express = require('express');
 
-const path = require('path');
-const http = require('http');
-const formidable = require('formidable');
-const fs = require('fs');
+// const path = require('path');
+// const http = require('http');
+// const formidable = require('formidable');
+// const fs = require('fs');
 
 const app = express();
 const mongoose = require('mongoose');
@@ -25,20 +25,20 @@ app.use('/api/users/', usersRouter);
 app.use('/api/auth/', authRouter);
 app.use('/api/destinations/', destinationsRouter);
 app.use(express.static('public'));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
-app.post('/upload', function(req, res){
-  var form = new formidable.IncomingForm();
-   form.parse(req, function (err, fields, files) {
-       var oldpath = files.filetoupload.path;
-       var newpath = './public/uploads/' + files.filetoupload.name;
-      fs.rename(oldpath, newpath, function (err) {
-        if (err) throw err;
-        res.write('File uploaded and moved!');
-        res.end();
-      });
-  });
-})
+// app.post('/upload', function(req, res){
+//   var form = new formidable.IncomingForm();
+//    form.parse(req, function (err, fields, files) {
+//        var oldpath = files.filetoupload.path;
+//        var newpath = './public/uploads/' + files.filetoupload.name;
+//       fs.rename(oldpath, newpath, function (err) {
+//         if (err) throw err;
+//         res.write('File uploaded and moved!');
+//         res.end();
+//       });
+//   });
+// })
 
 const jwtAuth = passport.authenticate('jwt', { session: false });
 

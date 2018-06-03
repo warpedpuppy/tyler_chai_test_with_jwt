@@ -29,31 +29,6 @@ $(function () {
 
         $(".new-dest-card, .sign-out-button").removeClass("hide-me");
 
-        // let MOCK_DESTINATIONS = {
-        //     "destinations": [
-        //         {
-        //             "id": "111111",
-        //             "name": "Hawaii",
-        //             "complete": "no",
-        //             "activities": ["Go surfing", "Meet Lilo & Stitch", "Fly over an active volcano"]
-        //         },
-        //         {
-        //             "id": "222222",
-        //             "name": "New York City",
-        //             "complete": "no",
-        //             "activities": ["See Times Square", "Climb the Statue of Liberty", "Walk through Central Park"]
-
-        //         },
-        //         {
-        //             "id": "333333",
-        //             "name": "Tokyo",
-        //             "complete": "no",
-        //             "activities": ["Photo with Mickey at Tokyo Disneyland", "Shop in the Ginza District", "Meet a Geisha at Omotenashi Nihonbashi"]
-
-        //         }
-        //     ]
-        // };
-
         $.ajax({
             "async": true,
             "crossDomain": true,
@@ -125,19 +100,21 @@ $(function () {
             $(".card").removeClass("hide-me");
         });
 
+        // Function containing HTML to allow uploading photos of completed destination
+
         function completeCard() {
             return `
-    <h3>Publish your destination</h3>
+    <h3>${destTitle}</h3>
     <div class="close-card-button">
         <a href="#"><i class="fa fa-times-circle"></i></a>
     </div>
     <p>Great job! Now add your photos and share your adventure!</p>
     <form ref='uploadForm' 
-    id='uploadForm' 
-    action='upload' 
+    id='uploadForm' name='uploadForm'
+    action='api/destinations/upload/${destTitle}' 
     method='post' 
     encType="multipart/form-data">
-      <input type="file" name="filetoupload" />
+      <input type="file" name="file" id="file" required />
       <input type='submit' value='Upload!' />
     </form>
     <div class="pending-uploads">
@@ -147,12 +124,43 @@ $(function () {
     </div>`
         }
 
-        // Mark the card as complete and allow photo uploads
+        // Mark the destination as complete and allow photo uploads
+
+        let destTitle = "";
 
         $("body").on("click", ".complete-button", function () {
             $(".card-open").children().hide();
+            destTitle = $('.card-open').children('h3').text();
             $(".card-open").append(completeCard());
+            // PUT request to toggle destination completed property
         });
+
+        // Handle photo uploader form
+
+        $("body").on("submit", "#uploadForm", function (e) {
+            e.preventDefault();
+            let destTitle = $('.card-open').children('h3').text();
+            let formdata = new FormData();
+            formdata.append('file', $('#file')[0].files[0]);
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": `/api/destinations/upload/${destTitle}`,
+                "method": "POST",
+                "data": formdata,
+                "processData": false,
+                "contentType": false,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function (data) {
+                    console.log(data);
+                },
+                "error": function (err) {
+                    console.log(err);
+                }
+            });
+        })
 
         // $("body").on("click", ".card-button add-button", function () {
         //     // $(".pending-uploads");
@@ -202,7 +210,7 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 }
                 // .done(
-                    // create a card from the new card and recreate a blank new card
+                // create a card from the new card and recreate a blank new card
                 // )
             });
         });
