@@ -27,7 +27,38 @@ $(function () {
 
     function loadApp() {
 
-        $(".new-dest-card, .sign-out-button").removeClass("hide-me");
+        $(".container").html("");
+
+        $(".sign-out-button").removeClass("hide-me");
+
+        // Create the structure for a new card
+
+        const newCard = function () {
+            return `<div class="card new-dest-card shadow">
+            <div class="close-card-button hide-me">
+                <a href="#">
+                    <i class="fa fa-times-circle"></i>
+                </a>
+            </div>
+            <div class="card-button hide-me">
+                <button class="save-button">Save</button>
+                <button class="complete-button">Complete</button>
+            </div>
+            <h3 contenteditable="true" placeholder="Where would you like to go!?"></h3>
+            <ul class="activitiesList">
+                <li contenteditable="true" placeholder="What should we do there?"></li>
+                <li contenteditable="true" placeholder="Hint: Type in the placeholders above to start creating your first destination. When you're done, click enter!"></li>
+                <li contenteditable="true" placeholder="Example: Fly a kite!!"></li>
+            </ul>
+            <div class="card-button hide-me">
+                <a href="#">
+                    <i class="fa check-circle"></i>
+                </a>
+            </div>
+        </div>`
+        };
+
+        $("main").append(newCard());
 
         $.ajax({
             "async": true,
@@ -45,7 +76,7 @@ $(function () {
             function displayMyDestinations(destinations) {
                 let returnStr = "";
                 for (let destination of destinations) {
-                    $('.container').append(createCard(destination));
+                    $('main').append(createCard(destination));
                 }
             };
 
@@ -65,7 +96,7 @@ $(function () {
                 activityStr += `<li contenteditable="true" >${activity.name}</li>`;
             })
             return `
-    <div class="card dest-card shadow hawaii-card i${destination.id}">
+    <div class="card dest-card shadow hawaii-card" id="i${destination.id}">
         <div class="close-card-button hide-me">
             <a href="#"><i class="fa fa-times-circle"></i></a>
         </div>
@@ -126,13 +157,54 @@ $(function () {
 
         // Mark the destination as complete and allow photo uploads
 
-        let destTitle = "";
+        $("body").on("click", ".complete-button", function (e) {
+            e.preventDefault();
+            let id = $(".card-open").attr("id").slice(1);
+            let name = $(this).parent().siblings("h3").text();
+            let complete = true;
+            let published = false;
 
-        $("body").on("click", ".complete-button", function () {
-            $(".card-open").children().hide();
-            destTitle = $('.card-open').children('h3').text();
-            $(".card-open").append(completeCard());
-            // PUT request to toggle destination completed property
+            let activities = [];
+            $(this).parent().siblings('.activitiesList').each(function () {
+                let activity = {};
+                $(this).find('li').each(function () {
+                    var current = $(this).text();
+                    let activity = {
+                        "name": current
+                    }
+                    activities.push(activity);
+                });
+            });
+
+            // Find and remove empty activities
+
+            for (activity in activities) {
+                if (activities[activity].name.length == 0) {
+                    activities.splice(activities.indexOf(this), 1);
+                }
+            };
+
+            let newDestination = { name, complete, published, activities };
+            console.log(newDestination);
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": `/api/destinations/id/${id}`,
+                "method": "PUT",
+                "data": newDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    destTitle = $('.card-open').children('h3').text();
+                    $(".card-open").children().hide();
+                    $(".card-open").append(completeCard());
+        
+                },
+                "error": function (err) {
+                    alert(err.responseText);
+                }
+            });
         });
 
         // Handle photo uploader form
@@ -162,10 +234,6 @@ $(function () {
             });
         })
 
-        // $("body").on("click", ".card-button add-button", function () {
-        //     // $(".pending-uploads");
-        // });
-
         // Pressing enter creates a new item
 
         const newListItem = `<li contenteditable="true"></li>`
@@ -176,12 +244,10 @@ $(function () {
             }
         });
 
-        // Clicking the save button on a new card sends it to the database
-
+        // Save button on a new card POSTs it to the database
 
         $("body").on("click", ".save-button", function (e) {
             e.preventDefault();
-            let user = 'tyler';
             let name = $(this).parent().siblings("h3").text();
             let complete = false;
             let published = false;
@@ -198,6 +264,14 @@ $(function () {
                 });
             });
 
+            // Find and remove empty activities
+
+            for (activity in activities) {
+                if (activities[activity].name.length == 0) {
+                    activities.splice(activities.indexOf(this), 1);
+                }
+            };
+
             let newDestination = { user, name, complete, published, activities };
             console.log(newDestination);
             $.ajax({
@@ -208,11 +282,64 @@ $(function () {
                 "data": newDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    loadApp()
+                },
+                "error": function (err) {
+                    alert(err.responseText);
                 }
-                // .done(
-                // create a card from the new card and recreate a blank new card
-                // )
             });
-        });
+        })
+
+        // Save button on existing card PUTs the new version to the database
+
+        $("body").on("click", ".update-button", function (e) {
+            e.preventDefault();
+            let id = $(".card-open").attr("id").slice(1);
+            let name = $(this).parent().siblings("h3").text();
+            let complete = false;
+            let published = false;
+
+            let activities = [];
+            $(this).parent().siblings('.activitiesList').each(function () {
+                let activity = {};
+                $(this).find('li').each(function () {
+                    var current = $(this).text();
+                    let activity = {
+                        "name": current
+                    }
+                    activities.push(activity);
+                });
+            });
+
+            // Find and remove empty activities
+
+            for (activity in activities) {
+                if (activities[activity].name.length == 0) {
+                    activities.splice(activities.indexOf(this), 1);
+                }
+            };
+
+            let newDestination = { name, complete, published, activities };
+            console.log(newDestination);
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": `/api/destinations/id/${id}`,
+                "method": "PUT",
+                "data": newDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    loadApp()
+                },
+                "error": function (err) {
+                    alert(err.responseText);
+                }
+            });
+        })
+
     }
 })

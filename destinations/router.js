@@ -45,6 +45,17 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
 
     name = name.trim();
 
+    // // Find and remove empty activities before creating the destination
+
+    // let emptyActivityIndex = "";
+    // console.log(req.body.activities);
+    // for (activity in req.body.activities) {
+    //     if (activity.name.length = 0) {
+    //         emptyActivityIndex = req.body.activities.indexOf(this);
+    //         req.body.activities.splice(emptyActivityIndex, 1);
+    //     }
+    // }
+
 
     return Destination.find({ user: req.user.username, name })
         .count()

@@ -11,6 +11,7 @@ const DestinationSchema = mongoose.Schema({
     name: {
         type: String,
         required: true,
+        min: 1
     },
     complete: {
         type: Boolean,
