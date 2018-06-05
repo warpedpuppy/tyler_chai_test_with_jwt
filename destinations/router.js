@@ -26,7 +26,7 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
         var oldpath = files.file.path;
         var newpath = `./public/img/destinations/${req.user.username}-${req.params.destTitle}-${files.file.name}`;
         if (fs.existsSync(newpath)) {
-            res.status(500).send('A file with that name already exists for this destination. Please rename the file!');
+            res.status(500).send('A file with that name already exists for this destination. Rename the file and try the upload again.');
         } else {
             fs.rename(oldpath, newpath, function (err) {
                 if (err) throw err;

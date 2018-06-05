@@ -157,7 +157,7 @@ $(function () {
                     console.log(data);
                 },
                 "error": function (err) {
-                    console.log(err);
+                    alert(err.responseText);
                 }
             });
         })
