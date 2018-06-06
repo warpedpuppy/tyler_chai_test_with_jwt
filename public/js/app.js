@@ -165,7 +165,6 @@ $(function () {
             });
 
             newDestination = { name, complete, published, activities };
-            console.log(newDestination);
             $.ajax({
                 "async": true,
                 "crossDomain": true,
@@ -211,7 +210,6 @@ $(function () {
             });
 
             newDestination = { name, complete, published, activities };
-            console.log(newDestination);
             $.ajax({
                 "async": true,
                 "crossDomain": true,
@@ -262,7 +260,7 @@ $(function () {
 
         // Complete destination activity upload wizard functionality
 
-        $('body').on('click', '.upload-wizard-start', function(e) {
+        $('body').on('click', '.upload-wizard-start', function (e) {
             e.preventDefault();
             $('.upload-wizard').html(uploadWizard());
         })
@@ -292,10 +290,7 @@ $(function () {
                 });
             });
 
-            console.log(activities);
-
             newDestination = { name, complete, published, activities };
-            console.log(newDestination);
             $.ajax({
                 "async": true,
                 "crossDomain": true,
@@ -323,7 +318,6 @@ $(function () {
             let destName = $('.card-open').children('h3').text();
             let formdata = new FormData();
             formdata.append('file', $('#file')[0].files[0]);
-            console.log(formdata);
             $.ajax({
                 "async": true,
                 "crossDomain": true,

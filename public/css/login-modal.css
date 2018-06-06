@@ -13,6 +13,7 @@
     padding: 50px;
     padding-bottom: 50px;
 }
+
 .close-card-button {
     position: absolute;
     top: 15px;
@@ -37,13 +38,13 @@
 
 .login-menu-active>a,
 .login-menu-active>a:visited,
-.login-menu-active>a:active  {
+.login-menu-active>a:active {
     text-decoration: none;
 }
 
 .login-menu-passive>a,
 .login-menu-passive>a:visited,
-.login-menu-passive>a:active  {
+.login-menu-passive>a:active {
     text-decoration: underline;
 }
 
@@ -62,6 +63,7 @@ button {
     width: 100%;
     text-transform: uppercase;
 }
+
 input {
     background-color: transparent;
     border: none;
@@ -80,12 +82,14 @@ input {
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }
+
 .error {
     height: 1em;
     font-size: 1em;
     color: red;
     text-align: center;
 }
+
 #register-success p {
     text-align: center;
 }

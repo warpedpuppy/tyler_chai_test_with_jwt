@@ -18,7 +18,7 @@ const jsonParser = bodyParser.json();
 
 destinationsRouter.use(bodyParser.urlencoded({ extended: true })); destinationsRouter.use(bodyParser.json());
 
-// Image uploader
+// Upload image on POST
 
 destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (req, res) {
     var form = new formidable.IncomingForm();
@@ -40,28 +40,15 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
 // Post to create a destination
 
 destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
-    console.log(req.body);
     let { name, complete, published, activities } = req.body;
 
     name = name.trim();
-
-    // // Find and remove empty activities before creating the destination
-
-    // let emptyActivityIndex = "";
-    // console.log(req.body.activities);
-    // for (activity in req.body.activities) {
-    //     if (activity.name.length = 0) {
-    //         emptyActivityIndex = req.body.activities.indexOf(this);
-    //         req.body.activities.splice(emptyActivityIndex, 1);
-    //     }
-    // }
-
 
     return Destination.find({ user: req.user.username, name })
         .count()
         .then(count => {
             if (count > 0) {
-                // There is an existing destination with the same name
+                // User has an existing destination with the same name
                 return Promise.reject({
                     code: 422,
                     reason: 'ValidationError',
@@ -84,8 +71,6 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
             return res.status(201).json(destination.serialize());
         })
         .catch(err => {
-            // Forward validation errors on to the client, otherwise give a 500
-            // error because something unexpected has happened
             if (err.reason === 'ValidationError') {
                 return res.status(err.code).json(err);
             }
@@ -94,35 +79,12 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
 });
 
 // Update a destination by id on PUT
-// Adds activities to an existing destination
 
 destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     let { name, complete, published, activities } = req.body;
-    console.log(req.body);
-    // return destination.activities.forEach(
-    //     activity => {
-    //         if (req.body.name)
-    //     }
-    // )
 
-    // let destination = req.body;d
-    // destination.activities.forEach(activity => {
-    // })
-
-    // Friend.findOneAndUpdate({_id: req.body.id}, {$set:{email: req.body.email}, $push: { previousEmails: this.email } }
-    // }, {new: true}, function(err, friend){
-    //     if (err){
-    //         console.log(err); 
-    //     } 
-    // });
     Destination.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: req.body.activities } }, { new: true })
         .then(dest => {
-            // let tempArray = dest.activities.slice();
-            // if (req.body.activity) {
-            //     tempArray.push(req.body.activity);
-            //     let tempObj = 
-            //     Destination.findByIdAndUpdate(req.body._id);
-            // }
             res.send(dest);
         })
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
@@ -140,20 +102,17 @@ destinationsRouter.delete('/id/:id', [jsonParser, jwtAuth], (req, res) => {
 
 destinationsRouter.get('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     return Destination.findOne({ _id: req.params.id })
-        // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
         .then(destination => res.json(destination))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
-// GET all desetinations for all users
+// GET all destinations for all users
 
 destinationsRouter.get('/all/', [jsonParser, jwtAuth], (req, res) => {
-    console.log(req.user)
     return Destination.find()
         .then(destinations => {
             res.json(destinations);
         })
-        // .then(destinations => res.json(destinations))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
@@ -161,7 +120,6 @@ destinationsRouter.get('/all/', [jsonParser, jwtAuth], (req, res) => {
 
 destinationsRouter.get('/public/', jsonParser, (req, res) => {
     return Destination.find({ published: true })
-        // .then(destinations => res.json(destinations.map(desination => destination.serialize())))
         .then(destinations => {
             let tempArray = destinations.map(destination => destination.serialize());
             res.json(tempArray);
@@ -172,13 +130,11 @@ destinationsRouter.get('/public/', jsonParser, (req, res) => {
 // GET all destinations for the current user
 
 destinationsRouter.get('/', [jsonParser, jwtAuth], (req, res) => {
-    console.log(req.user)
     return Destination.find({ user: req.user.username })
         .then(destinations => {
             let tempArray = destinations.map(destination => destination.serialize());
             res.json(tempArray);
         })
-        // .then(destinations => res.json(destinations))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 

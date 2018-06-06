@@ -28,22 +28,6 @@ router.post('/', jsonParser, (req, res) => {
         field => field in req.body && typeof req.body[field] !== 'string'
     );
 
-    // if (nonStringField) {
-    //     return res.status(422).json({
-    //         code: 422,
-    //         reason: 'ValidationError',
-    //         message: 'Incorrect field type: expected string',
-    //         location: nonStringField
-    //     });
-    // }
-
-    // If the username and password aren't trimmed we give an error.  Users might
-    // expect that these will work without trimming (i.e. they want the password
-    // "foobar ", including the space at the end).  We need to reject such values
-    // explicitly so the users know what's happening, rather than silently
-    // trimming them and expecting the user to understand.
-    // We'll silently trim the other fields, because they aren't credentials used
-    // to log in, so it's less of a problem.
     const explicityTrimmedFields = ['name', 'username', 'password'];
     const nonTrimmedField = explicityTrimmedFields.find(
         field => req.body[field].trim() !== req.body[field]

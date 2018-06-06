@@ -29,7 +29,7 @@ $("body").on("click", ".login-tab", function (e) {
     $(".register-tab").removeClass("login-menu-active").addClass("login-menu-passive");
     $("#register-success").addClass("hide-me");
 });
-$("body").on("click", "#register-success > button", function(e) {
+$("body").on("click", "#register-success > button", function (e) {
     e.preventDefault();
     $("#register-success").addClass("hide-me");
     $("#login-form").removeClass("hide-me");
@@ -43,28 +43,27 @@ $("#register-form").submit(function (e) {
         "username": $("#new-username").val(),
         "password": $("#new-password").val(),
         "name": $("#new-name").val()
-};
+    };
 
     $.ajax({
         type: "POST",
         url: "/api/users",
         dataType: "json",
-        contentType : "application/json",
+        contentType: "application/json",
         data: JSON.stringify(newUser),
-        success: function(data, textStatus, jqXHR){
-            console.log("User created.");
+        success: function (data, textStatus, jqXHR) {
             $("#register-form input").val("");
             $("#register-form").addClass("hide-me");
             $("#register-success").removeClass("hide-me");
         },
-        error: function(data, textStatus, errorThrown) {
+        error: function (data, textStatus, errorThrown) {
             $("#register-error").html(`${data.responseJSON.location} - ${data.responseJSON.message}`);
         }
     });
 
 });
 
-$("#login-form").submit(function(e) {
+$("#login-form").submit(function (e) {
     e.preventDefault();
     $("#login-error").html(``);
     let aUser = {
@@ -78,11 +77,11 @@ $("#login-form").submit(function(e) {
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify(aUser),
-        success: function(data, textStatus, jqXHR){
+        success: function (data, textStatus, jqXHR) {
             sessionStorageManager("token", data.authToken, true);
             window.location.replace("/app.html");
         },
-        error: function(data, textStatus, errorThrown) {
+        error: function (data, textStatus, errorThrown) {
             $("#login-error").html(`Incorrect username or password`);
         }
     })

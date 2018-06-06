@@ -19,7 +19,7 @@ describe('App', function () {
 
     it('Should have status OK', function () {
         return chai.request(app)
-            .get('/')
+            .get('/destinations')
             .then(function (res) {
                 expect(res).to.have.status(200);
             });

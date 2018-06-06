@@ -10,7 +10,6 @@ $(function () {
             "url": "/api/destinations/public",
             "method": "GET"
         }).done(function (DESTINATIONS) {
-            console.log("Worked!")
             function getMyDestinations(callbackFn) {
                 setTimeout(function () { callbackFn(DESTINATIONS) }, 100);
             };
@@ -53,7 +52,7 @@ $(function () {
             </div>
         </div>
             `
-                };
+        };
 
     }
     loadHomepage();

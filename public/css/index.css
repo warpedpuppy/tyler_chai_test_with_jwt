@@ -5,6 +5,7 @@ body {
     color: #fff;
     margin: 0;
 }
+
 .hide-me {
     display: none;
 }
@@ -22,7 +23,6 @@ body {
 header {
     position: relative;
     height: 400px;
-    background: lightpink;
     overflow: hidden;
 }
 
@@ -35,7 +35,7 @@ header {
     margin-left: 75px;
 }
 
-.h1 {
+h1 {
     font-family: Raleway, Roboto, sans-serif;
     font-weight: 700;
     font-size: 2em;
@@ -45,8 +45,6 @@ h2 {
     margin: 1.5em auto;
     padding-left: 75px;
 }
-
-.dest-section {}
 
 .public-dest {
     margin: 25px auto;
@@ -59,7 +57,7 @@ h2 {
 .dest-gradient {
     position: absolute;
     height: 150px;
-    width: 445px;
+    width: 400px;
     background: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 62%, rgba(0, 0, 0, 0.7) 75%, rgba(0, 0, 0, 0) 100%);
 }
 
