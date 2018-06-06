@@ -1,5 +1,6 @@
 $(function () {
     const myToken = sessionStorage.getItem("token");
+    let newDestination;
     function verifyLogin() {
         $.ajax({
             url: `/api/auth/app_protected`,
@@ -47,8 +48,6 @@ $(function () {
             <h3 contenteditable="true" placeholder="Where would you like to go!?"></h3>
             <ul class="activitiesList">
                 <li contenteditable="true" placeholder="What should we do there?"></li>
-                <li contenteditable="true" placeholder="Hint: Type in the placeholders above to start creating your first destination. When you're done, click enter!"></li>
-                <li contenteditable="true" placeholder="Example: Fly a kite!!"></li>
             </ul>
             <div class="card-button hide-me">
                 <a href="#">
@@ -165,7 +164,7 @@ $(function () {
                 });
             });
 
-            let newDestination = { name, complete, published, activities };
+            newDestination = { name, complete, published, activities };
             console.log(newDestination);
             $.ajax({
                 "async": true,
@@ -211,7 +210,7 @@ $(function () {
                 });
             });
 
-            let newDestination = { name, complete, published, activities };
+            newDestination = { name, complete, published, activities };
             console.log(newDestination);
             $.ajax({
                 "async": true,
@@ -223,7 +222,7 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 },
                 "success": function () {
-                    alert("Saved!");
+                    alert("Destination saved!");
                 },
                 "error": function (err) {
                     alert(err.responseText);
@@ -231,29 +230,42 @@ $(function () {
             });
         })
 
-        // Function containing HTML to allow uploading photos of completed destination
+        // Complete destination card HTML
 
         function completeCard() {
             return `
-            <h3>${destTitle}</h3>
+            <h3>${newDestination.name}</h3>
             <div class="close-card-button">
                 <a href="#"><i class="fa fa-times-circle"></i></a>
             </div>
-            <p>Great job! Now add your photos and share your adventure!</p>
-            <form ref='uploadForm' 
-            id='uploadForm' name='uploadForm'
-            action='api/destinations/upload/${destTitle}' 
-            method='post' 
-            encType="multipart/form-data">
-              <input type="file" name="file" id="file" required />
-              <input type='submit' value='Upload!' />
-            </form>
-            <div class="pending-uploads">
+            <div class="upload-wizard">
+                <p>Great job! Now add photos of your activities and share your adventure!</p>
+                <button class="upload-wizard-start">Start</button>
             </div>
             <div class="add-button-container shadow">
                 <span class="add-button">+</span>
             </div>`
         }
+
+        // Complete destination activity upload wizard HTML
+
+        function uploadWizard() {
+            return `
+            <h5>${newDestination.activities[0].name}</h5>
+        <form ref='uploadForm' id='uploadForm' name='uploadForm'
+            action='api/destinations/upload/${newDestination.name}' method='post' 
+            encType="multipart/form-data">
+              <input type="file" name="file" id="file" required />
+              <input type='submit' value='Upload!' />
+            </form>`
+        }
+
+        // Complete destination activity upload wizard functionality
+
+        $('body').on('click', '.upload-wizard-start', function(e) {
+            e.preventDefault();
+            $('.upload-wizard').html(uploadWizard());
+        })
 
         // Mark the destination as complete and allow photo uploads
 
@@ -264,7 +276,6 @@ $(function () {
             let name = $(`#${cardID} h3`).text();
             let complete = true;
             let published = false;
-
             let activities = [];
             $(this).parent().siblings('.activitiesList').each(function () {
                 let activity = {};
@@ -281,7 +292,9 @@ $(function () {
                 });
             });
 
-            let newDestination = { name, complete, published, activities };
+            console.log(activities);
+
+            newDestination = { name, complete, published, activities };
             console.log(newDestination);
             $.ajax({
                 "async": true,
@@ -293,10 +306,9 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 },
                 "success": function () {
-                    destTitle = $('.card-open').children('h3').text();
+                    destName = $(`#${cardID} h3`).text();
                     $(".card-open").children().hide();
                     $(".card-open").append(completeCard());
-
                 },
                 "error": function (err) {
                     alert(err.responseText);
@@ -308,13 +320,14 @@ $(function () {
 
         $("body").on("submit", "#uploadForm", function (e) {
             e.preventDefault();
-            let destTitle = $('.card-open').children('h3').text();
+            let destName = $('.card-open').children('h3').text();
             let formdata = new FormData();
             formdata.append('file', $('#file')[0].files[0]);
+            console.log(formdata);
             $.ajax({
                 "async": true,
                 "crossDomain": true,
-                "url": `/api/destinations/upload/${destTitle}`,
+                "url": `/api/destinations/upload/${destName}`,
                 "method": "POST",
                 "data": formdata,
                 "processData": false,
