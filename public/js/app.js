@@ -131,36 +131,137 @@ $(function () {
             $(".card").removeClass("hide-me");
         });
 
+        // Pressing enter creates a new item
+
+        const newListItem = `<li contenteditable="true"></li>`
+        $("body").on("keydown", ".activitiesList", function (e) {
+            if (e.keyCode === 13) {
+                e.preventDefault();
+                $(this).append(newListItem);
+            }
+        });
+
+        // Save button on a new card POSTs it to the database
+
+        $("body").on("click", ".save-button", function (e) {
+            e.preventDefault();
+            let name = $(this).parent().siblings("h3").text();
+            let complete = false;
+            let published = false;
+
+            let activities = [];
+            $(this).parent().siblings('.activitiesList').each(function () {
+                let activity = {};
+                $(this).find('li').each(function () {
+                    var current = $(this).text();
+                    // Skip empty activities
+                    if (current.length > 0) {
+                        let activity = {
+                            "name": current,
+                            "url": ""
+                        }
+                        activities.push(activity);
+                    }
+                });
+            });
+
+            let newDestination = { name, complete, published, activities };
+            console.log(newDestination);
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": "/api/destinations",
+                "method": "POST",
+                "data": newDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    loadApp()
+                },
+                "error": function (err) {
+                    alert(err.responseText);
+                }
+            });
+        })
+
+        // Save button on existing card PUTs the new version to the database
+
+        $("body").on("click", ".update-button", function (e) {
+            e.preventDefault();
+            let cardID = $(".card-open").attr("id");
+            let id = cardID.slice(1);
+            let name = $(`#${cardID} h3`).text();
+            let complete = false;
+            let published = false;
+
+            let activities = [];
+            $(this).parent().siblings('.activitiesList').each(function () {
+                let activity = {};
+                $(this).find('li').each(function () {
+                    var current = $(this).text();
+                    // Skip empty activities
+                    if (current.length > 0) {
+                        let activity = {
+                            "name": current,
+                            "url": ""
+                        }
+                        activities.push(activity);
+                    }
+                });
+            });
+
+            let newDestination = { name, complete, published, activities };
+            console.log(newDestination);
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": `/api/destinations/id/${id}`,
+                "method": "PUT",
+                "data": newDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    alert("Saved!");
+                },
+                "error": function (err) {
+                    alert(err.responseText);
+                }
+            });
+        })
+
         // Function containing HTML to allow uploading photos of completed destination
 
         function completeCard() {
             return `
-    <h3>${destTitle}</h3>
-    <div class="close-card-button">
-        <a href="#"><i class="fa fa-times-circle"></i></a>
-    </div>
-    <p>Great job! Now add your photos and share your adventure!</p>
-    <form ref='uploadForm' 
-    id='uploadForm' name='uploadForm'
-    action='api/destinations/upload/${destTitle}' 
-    method='post' 
-    encType="multipart/form-data">
-      <input type="file" name="file" id="file" required />
-      <input type='submit' value='Upload!' />
-    </form>
-    <div class="pending-uploads">
-    </div>
-    <div class="add-button-container shadow">
-        <span class="add-button">+</span>
-    </div>`
+            <h3>${destTitle}</h3>
+            <div class="close-card-button">
+                <a href="#"><i class="fa fa-times-circle"></i></a>
+            </div>
+            <p>Great job! Now add your photos and share your adventure!</p>
+            <form ref='uploadForm' 
+            id='uploadForm' name='uploadForm'
+            action='api/destinations/upload/${destTitle}' 
+            method='post' 
+            encType="multipart/form-data">
+              <input type="file" name="file" id="file" required />
+              <input type='submit' value='Upload!' />
+            </form>
+            <div class="pending-uploads">
+            </div>
+            <div class="add-button-container shadow">
+                <span class="add-button">+</span>
+            </div>`
         }
 
         // Mark the destination as complete and allow photo uploads
 
         $("body").on("click", ".complete-button", function (e) {
             e.preventDefault();
-            let id = $(".card-open").attr("id").slice(1);
-            let name = $(this).parent().siblings("h3").text();
+            let cardID = $(".card-open").attr("id");
+            let id = cardID.slice(1);
+            let name = $(`#${cardID} h3`).text();
             let complete = true;
             let published = false;
 
@@ -169,20 +270,16 @@ $(function () {
                 let activity = {};
                 $(this).find('li').each(function () {
                     var current = $(this).text();
-                    let activity = {
-                        "name": current
+                    // Skip empty activities
+                    if (current.length > 0) {
+                        let activity = {
+                            "name": current,
+                            "url": ""
+                        }
+                        activities.push(activity);
                     }
-                    activities.push(activity);
                 });
             });
-
-            // Find and remove empty activities
-
-            for (activity in activities) {
-                if (activities[activity].name.length == 0) {
-                    activities.splice(activities.indexOf(this), 1);
-                }
-            };
 
             let newDestination = { name, complete, published, activities };
             console.log(newDestination);
@@ -199,7 +296,7 @@ $(function () {
                     destTitle = $('.card-open').children('h3').text();
                     $(".card-open").children().hide();
                     $(".card-open").append(completeCard());
-        
+
                 },
                 "error": function (err) {
                     alert(err.responseText);
@@ -227,113 +324,6 @@ $(function () {
                 },
                 "success": function (data) {
                     console.log(data);
-                },
-                "error": function (err) {
-                    alert(err.responseText);
-                }
-            });
-        })
-
-        // Pressing enter creates a new item
-
-        const newListItem = `<li contenteditable="true"></li>`
-        $("body").on("keydown", ".activitiesList", function (e) {
-            if (e.keyCode === 13) {
-                e.preventDefault();
-                $(this).append(newListItem);
-            }
-        });
-
-        // Save button on a new card POSTs it to the database
-
-        $("body").on("click", ".save-button", function (e) {
-            e.preventDefault();
-            let name = $(this).parent().siblings("h3").text();
-            let complete = false;
-            let published = false;
-
-            let activities = [];
-            $(this).parent().siblings('.activitiesList').each(function () {
-                let activity = {};
-                $(this).find('li').each(function () {
-                    var current = $(this).text();
-                    let activity = {
-                        "name": current
-                    }
-                    activities.push(activity);
-                });
-            });
-
-            // Find and remove empty activities
-
-            for (activity in activities) {
-                if (activities[activity].name.length == 0) {
-                    activities.splice(activities.indexOf(this), 1);
-                }
-            };
-
-            let newDestination = { user, name, complete, published, activities };
-            console.log(newDestination);
-            $.ajax({
-                "async": true,
-                "crossDomain": true,
-                "url": "/api/destinations",
-                "method": "POST",
-                "data": newDestination,
-                "headers": {
-                    "Authorization": `Bearer ${myToken}`
-                },
-                "success": function () {
-                    loadApp()
-                },
-                "error": function (err) {
-                    alert(err.responseText);
-                }
-            });
-        })
-
-        // Save button on existing card PUTs the new version to the database
-
-        $("body").on("click", ".update-button", function (e) {
-            e.preventDefault();
-            let id = $(".card-open").attr("id").slice(1);
-            let name = $(this).parent().siblings("h3").text();
-            let complete = false;
-            let published = false;
-
-            let activities = [];
-            $(this).parent().siblings('.activitiesList').each(function () {
-                let activity = {};
-                $(this).find('li').each(function () {
-                    var current = $(this).text();
-                    let activity = {
-                        "name": current
-                    }
-                    activities.push(activity);
-                });
-            });
-
-            // Find and remove empty activities
-
-            for (activity in activities) {
-                if (activities[activity].name.length == 0) {
-                    activities.splice(activities.indexOf(this), 1);
-                }
-            };
-
-            let newDestination = { name, complete, published, activities };
-            console.log(newDestination);
-            $.ajax({
-                "async": true,
-                "crossDomain": true,
-                "url": `/api/destinations/id/${id}`,
-                "method": "PUT",
-                "data": newDestination,
-                "headers": {
-                    "Authorization": `Bearer ${myToken}`
-                },
-                "success": function () {
-                    loadApp()
                 },
                 "error": function (err) {
                     alert(err.responseText);

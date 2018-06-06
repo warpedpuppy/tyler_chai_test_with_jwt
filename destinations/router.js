@@ -93,11 +93,11 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
         });
 });
 
-// Update a destination by name on PUT
+// Update a destination by id on PUT
 // Adds activities to an existing destination
 
 destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
-    let { complete, published, activities } = req.body;
+    let { name, complete, published, activities } = req.body;
     console.log(req.body);
     // return destination.activities.forEach(
     //     activity => {
@@ -115,7 +115,7 @@ destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     //         console.log(err); 
     //     } 
     // });
-    Destination.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name, complete: req.body.published, published: req.body.published, activities: req.body.activities } }, { new: true })
+    Destination.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: req.body.activities } }, { new: true })
         .then(dest => {
             // let tempArray = dest.activities.slice();
             // if (req.body.activity) {
@@ -136,14 +136,14 @@ destinationsRouter.delete('/id/:id', [jsonParser, jwtAuth], (req, res) => {
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
-// Get one destination by name on GET
+// Get one destination by id on GET
 
-// destinationsRouter.get('/:id', [jsonParser, jwtAuth], (req, res) => {
-//     return Destination.findOne({ _id: req.params.id })
-//         // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
-//         .then(destination => res.json(destination))
-//         .catch(err => res.status(500).json({ message: 'Internal server error' }));
-// });
+destinationsRouter.get('/id/:id', [jsonParser, jwtAuth], (req, res) => {
+    return Destination.findOne({ _id: req.params.id })
+        // .then(destination => res.json(destination.map(desinationSerialized => destination.serialize())))
+        .then(destination => res.json(destination))
+        .catch(err => res.status(500).json({ message: 'Internal server error' }));
+});
 
 // GET all desetinations for all users
 
