@@ -248,8 +248,20 @@ $(function () {
         // Complete destination activity upload wizard HTML
 
         function uploadWizard() {
+            console.log("Upload wizard called");
+            let tempActivity;
+            for (let activity of newDestination.activities) {
+                console.log(activity.name);
+                if (activity.url === "") {
+                    tempActivity = activity;
+                    break;
+                }
+            }
+            if (!tempActivity) {
+                return
+            }
             return `
-            <h5>${newDestination.activities[0].name}</h5>
+            <h5>${tempActivity.name}</h5>
         <form ref='uploadForm' id='uploadForm' name='uploadForm'
             action='api/destinations/upload/${newDestination.name}' method='post' 
             encType="multipart/form-data">
@@ -330,7 +342,7 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 },
                 "success": function (data) {
-                    console.log(data);
+                    $('.upload-wizard').html(uploadWizard());
                 },
                 "error": function (err) {
                     alert(err.responseText);

@@ -24,6 +24,9 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var oldpath = files.file.path;
+        // if (!fs.existsSync(dir)){
+        //     fs.mkdirSync(dir);
+        // }
         var newpath = `./public/img/destinations/${req.user.username}-${req.params.destTitle}-${files.file.name}`;
         if (fs.existsSync(newpath)) {
             res.status(500).send('A file with that name already exists for this destination. Rename the file and try the upload again.');
@@ -33,8 +36,10 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
                 res.write('File uploaded and moved!');
                 res.end();
             });
+        Destination.findOneAndUpdate()
         }
     });
+
 })
 
 // Post to create a destination
