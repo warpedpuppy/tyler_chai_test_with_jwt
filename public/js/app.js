@@ -95,7 +95,7 @@ $(function () {
                 activityStr += `<li contenteditable="true" >${activity.name}</li>`;
             })
             return `
-    <div class="card dest-card shadow hawaii-card" id="i${destination.id}">
+    <div class="card dest-card shadow hawaii-card" id="i${destination._id}">
         <div class="close-card-button hide-me">
             <a href="#"><i class="fa fa-times-circle"></i></a>
         </div>
