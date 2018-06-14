@@ -71,7 +71,7 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
             createDestination(idArray);
         })
         .catch(err => {
-            console.log("error");
+            console.log(err);
         })
 
     function createDestination(idArray) {
