@@ -143,8 +143,8 @@ destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
         req.body.activities = idArray;
         console.log(req.body);
         // Destination.findOneAndUpdate(req.params.id, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: idArray } }, { new: true })
-        Destination.findOneAndUpdate(req.params.id, req.body, { new: true })
-            .populate("activites")
+        Destination.findByIdAndUpdate(req.params.id, req.body, { new: true })
+            // .populate("activites")
             .then(dest => {
                 res.send(dest);
             })
