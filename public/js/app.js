@@ -247,17 +247,24 @@ $(function () {
 
         // Complete destination activity upload wizard HTML
 
-        function uploadWizard() {
+        function uploadWizard(data) {
             console.log("Upload wizard called");
             let tempActivity;
             for (let activity of newDestination.activities) {
-                console.log(activity.name);
+                console.log(activity);
                 if (activity.url === "") {
                     tempActivity = activity;
+                    console.log(`Data: ${data}`);
+                    tempActivity.url = data;
+                    console.log(`tempActivity.url: ${tempActivity.url}`);
+                    tempActivity = activity;
+                    console.log(activity);
+                    console.log(newDestination.activities);
                     break;
                 }
             }
             if (!tempActivity) {
+
                 return
             }
             return `
@@ -342,7 +349,8 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 },
                 "success": function (data) {
-                    $('.upload-wizard').html(uploadWizard());
+                    console.log(data);
+                    $('.upload-wizard').html(uploadWizard(data));
                 },
                 "error": function (err) {
                     alert(err.responseText);

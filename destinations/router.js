@@ -34,7 +34,7 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
         } else {
             fs.rename(oldpath, newpath, function (err) {
                 if (err) throw err;
-                res.write('File uploaded and moved!');
+                res.send(newpath);
                 res.end();
             });
             Destination.findOneAndUpdate()

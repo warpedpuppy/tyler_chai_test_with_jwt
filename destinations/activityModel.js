@@ -12,7 +12,7 @@ const activitySchema = mongoose.Schema({
     url: {
         type: String,
         required: false
-    },
+        },
     user: {
         type: String,
         required: true
