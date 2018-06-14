@@ -115,12 +115,44 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
 destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     let { name, complete, published, activities } = req.body;
 
-    Destination.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: req.body.activities } }, { new: true })
-        .populate("activites")
-        .then(dest => {
-            res.send(dest);
+    let tempArray = [];
+    for (let activity of req.body.activities) {
+        tempArray.push({
+            name: activity.name,
+            url: activity.url,
+            user: req.user.username,
+            destination: activity.destination
         })
-        .catch(err => res.status(500).json({ message: 'Internal server error' }));
+    }
+    console.log(tempArray);
+    Activity.insertMany(tempArray)
+        .then(resArray => {
+            console.log(resArray);
+            let idArray = [];
+            for (let res of resArray) {
+                idArray.push(res._id);
+            }
+            console.log(idArray);
+            updateDestination(idArray);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+
+    function updateDestination(idArray) {
+        req.body.activities = idArray;
+        console.log(req.body);
+        // Destination.findOneAndUpdate(req.params.id, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: idArray } }, { new: true })
+        Destination.findOneAndUpdate(req.params.id, req.body, { new: true })
+            .populate("activites")
+            .then(dest => {
+                res.send(dest);
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({ message: 'Internal server error' })
+            });
+    }
 });
 
 // Remove a destination by name on DELETE
