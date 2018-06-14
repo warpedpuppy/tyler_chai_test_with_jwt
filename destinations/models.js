@@ -1,9 +1,10 @@
 'use strict'
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
-const DestinationSchema = mongoose.Schema({
+const destinationSchema = mongoose.Schema({
     user: {
         type: String,
         required: true
@@ -21,20 +22,23 @@ const DestinationSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    activities: []
+    activities: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Activity'
+    }]
 });
 
-DestinationSchema.methods.serialize = function () {
-    return {
-        user: this.user,
-        name: this.name,
-        complete: this.complete || false,
-        published: this.published,
-        activities: this.activities,
-        id: this.id
-    };
-};
+// DestinationSchema.methods.serialize = function () {
+//     return {
+//         user: this.user,
+//         name: this.name,
+//         complete: this.complete || false,
+//         published: this.published,
+//         activities: this.activities,
+//         id: this.id
+//     };
+// };
 
-const Destination = mongoose.model('Destination', DestinationSchema);
+const Destination = mongoose.model('Destination', destinationSchema);
 
 module.exports = { Destination };

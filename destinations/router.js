@@ -8,6 +8,7 @@ const formidable = require('formidable');
 const fs = require('fs');
 
 let { Destination } = require('./models');
+let { Activity } = require('./activityModel');
 
 const destinationsRouter = express.Router();
 
@@ -36,7 +37,7 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
                 res.write('File uploaded and moved!');
                 res.end();
             });
-        Destination.findOneAndUpdate()
+            Destination.findOneAndUpdate()
         }
     });
 
@@ -49,38 +50,64 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
 
     name = name.trim();
 
-    return Destination.find({ user: req.user.username, name })
-        .count()
-        .then(count => {
-            if (count > 0) {
-                // User has an existing destination with the same name
-                return Promise.reject({
-                    code: 422,
-                    reason: 'ValidationError',
-                    message: `You already have a destination named ${name}`,
-                    location: 'name'
-                });
+    let tempArray = [];
+    for (let activity of req.body.activities) {
+        tempArray.push({
+            name: activity.name,
+            url: activity.url,
+            user: req.user.username,
+            destination: activity.destination
+        })
+    }
+    console.log(tempArray);
+    Activity.insertMany(tempArray)
+        .then(resArray => {
+            console.log(resArray);
+            let idArray = [];
+            for (let res of resArray) {
+                idArray.push(res._id);
             }
-            return Destination;
-        })
-        .then(destination => {
-            return Destination.create({
-                user: req.user.username,
-                name,
-                complete,
-                published,
-                activities
-            });
-        })
-        .then(destination => {
-            return res.status(201).json(destination.serialize());
+            console.log(idArray);
+            createDestination(idArray);
         })
         .catch(err => {
-            if (err.reason === 'ValidationError') {
-                return res.status(err.code).json(err);
-            }
-            res.status(500).json({ code: 500, message: 'Internal server error' });
-        });
+            console.log(err);
+        })
+
+    function createDestination(idArray) {
+        Destination.find({ user: req.user.username, name })
+            .count()
+            .then(count => {
+                if (count > 0) {
+                    // User has an existing destination with the same name
+                    return Promise.reject({
+                        code: 422,
+                        reason: 'ValidationError',
+                        message: `You already have a destination named ${name}`,
+                        location: 'name'
+                    });
+                }
+                return Destination;
+            })
+            .then(destination => {
+                return Destination.create({
+                    user: req.user.username,
+                    name,
+                    complete,
+                    published,
+                    activities: idArray,
+                });
+            })
+            .then(destination => {
+                res.status(200).send(destination);
+            })
+            .catch(err => {
+                if (err.reason === 'ValidationError') {
+                    return res.status(err.code).json(err);
+                }
+                res.status(500).json({ code: 500, message: 'Internal server error' });
+            });
+    }
 });
 
 // Update a destination by id on PUT
@@ -89,6 +116,7 @@ destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     let { name, complete, published, activities } = req.body;
 
     Destination.findOneAndUpdate({ _id: req.params.id }, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: req.body.activities } }, { new: true })
+        .populate("activites")
         .then(dest => {
             res.send(dest);
         })
@@ -107,7 +135,10 @@ destinationsRouter.delete('/id/:id', [jsonParser, jwtAuth], (req, res) => {
 
 destinationsRouter.get('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     return Destination.findOne({ _id: req.params.id })
-        .then(destination => res.json(destination))
+        .populate("activities")
+        .then(destination => {
+            res.json(destination);
+        })
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
 
@@ -115,6 +146,7 @@ destinationsRouter.get('/id/:id', [jsonParser, jwtAuth], (req, res) => {
 
 destinationsRouter.get('/all/', [jsonParser, jwtAuth], (req, res) => {
     return Destination.find()
+        .populate("activities")
         .then(destinations => {
             res.json(destinations);
         })
@@ -125,9 +157,11 @@ destinationsRouter.get('/all/', [jsonParser, jwtAuth], (req, res) => {
 
 destinationsRouter.get('/public/', jsonParser, (req, res) => {
     return Destination.find({ published: true })
+        .populate("activities")
         .then(destinations => {
-            let tempArray = destinations.map(destination => destination.serialize());
-            res.json(tempArray);
+            // let tempArray = destinations.map(destination => destination.serialize());
+            // res.json(tempArray);
+            res.json(destinations)
         })
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
@@ -136,9 +170,11 @@ destinationsRouter.get('/public/', jsonParser, (req, res) => {
 
 destinationsRouter.get('/', [jsonParser, jwtAuth], (req, res) => {
     return Destination.find({ user: req.user.username })
+        .populate("activities")
         .then(destinations => {
-            let tempArray = destinations.map(destination => destination.serialize());
-            res.json(tempArray);
+            // let tempArray = destinations.map(destination => destination.serialize());
+            // res.json(tempArray);
+            res.json(destinations);
         })
         .catch(err => res.status(500).json({ message: 'Internal server error' }));
 });
