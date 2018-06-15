@@ -248,47 +248,6 @@ $(function () {
             </div>`
         }
 
-        // Complete destination activity upload wizard HTML
-
-        function uploadWizard() {
-            console.log("Upload wizard called");
-            let tempActivity;
-
-            for (let activity of myDestination.activities) {
-                // console.log(`activity: `, activity);
-                if (activity.url === "") {
-                    tempActivity = activity;
-                    // tempActivity.url = data;
-                    // console.log(`tempActivity.url: ${tempActivity.url}`);
-                    // tempActivity = activity;
-                    console.log(`myDestination.activities`, myDestination.activities);
-                    break;
-                }
-            }
-            if (!tempActivity) {
-
-                return
-            }
-
-            return `
-            <h5>${tempActivity.name}</h5>
-        <form ref='uploadForm' id='uploadForm' name='uploadForm'
-            action='api/destinations/upload/${myDestination.name}' method='post' 
-            encType="multipart/form-data">
-              <input type="hidden" name="activityID" value="${tempActivity.id}" />
-              <input type="hidden" name="activityName" value="${tempActivity.name}" />
-              <input type="file" name="file" id="file" required />
-              <input type='submit' value='Upload!' />
-            </form>`
-        }
-
-        // Complete destination activity upload wizard functionality
-
-        $('body').on('click', '.upload-wizard-start', function (e) {
-            e.preventDefault();
-            $('.upload-wizard').html(uploadWizard());
-        })
-
         // Mark the destination as complete and allow photo uploads
 
         $("body").on("click", ".complete-button", function (e) {
@@ -338,6 +297,42 @@ $(function () {
                 }
             });
         });
+
+
+        // Complete destination activity upload wizard HTML
+        function uploadWizard() {
+            console.log("Upload wizard called");
+            let tempActivity;
+
+            for (let activity of myDestination.activities) {
+                if (activity.url === "") {
+                    tempActivity = activity;
+                    break;
+                }
+            }
+            if (!tempActivity) {
+
+                return
+            }
+
+            return `
+            <h5>${tempActivity.name}</h5>
+        <form ref='uploadForm' id='uploadForm' name='uploadForm'
+            action='api/destinations/upload/${myDestination.name}' method='post' 
+            encType="multipart/form-data">
+              <input type="hidden" name="activityID" value="${tempActivity.id}" />
+              <input type="hidden" name="activityName" value="${tempActivity.name}" />
+              <input type="file" name="file" id="file" required />
+              <input type='submit' value='Upload!' />
+            </form>`
+        }
+
+        // Complete destination activity upload wizard functionality
+
+        $('body').on('click', '.upload-wizard-start', function (e) {
+            e.preventDefault();
+            $('.upload-wizard').html(uploadWizard());
+        })
 
         // Handle photo uploader form
 
