@@ -28,19 +28,44 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
         // if (!fs.existsSync(dir)){
         //     fs.mkdirSync(dir);
         // }
-        var newpath = `./public/img/destinations/${req.user.username}-${req.params.destTitle}-${files.file.name}`;
-        if (fs.existsSync(newpath)) {
-            res.status(500).send('A file with that name already exists for this destination. Rename the file and try the upload again.');
-        } else {
+        let fileExt = `.${files.file.type.slice(6)}`;
+        // console.log(fileExt);
+        var newpath = `./public/img/destinations/${req.user.username}-${req.params.destTitle}-${fields.activityID}${fileExt}`;
+        let newurl = `/img/destinations/${req.user.username}-${req.params.destTitle}-${fields.activityID}${fileExt}`;
+        // if (fs.existsSync(newpath)) {
+        //     res.status(500).send('A file with that name already exists for this destination. Rename the file and try the upload again.');
+        // } else {
             fs.rename(oldpath, newpath, function (err) {
                 if (err) throw err;
-                res.send(newpath);
-                res.end();
+                // res.send(newpath);
+                // res.end();
+                console.log(`fields.activityID`, fields.activityID);
+                console.log(`req.user.username`, req.user.username);
+                console.log('newurl', newurl);
+                console.log('fields', fields);
+                Activity.findByIdAndUpdate(fields.activityID, {url: newurl}, {new: true})
+                .then(activity => {
+                    res.send(activity);
+                })
+                .catch(err => {
+                    res.send(err);
+                })
             });
-            Destination.findOneAndUpdate()
-        }
+        // }
     });
 
+})
+
+// Get an Activity by it's ID
+
+destinationsRouter.get('/activities/:activityID', jsonParser, (req, res) => {
+    Activity.findById(req.params.activityID)
+    .then(activity => {
+        res.send(activity);
+    })
+    .catch(err => {
+        res.send(err);
+    })
 })
 
 // Post to create a destination
@@ -59,19 +84,19 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
             destination: activity.destination
         })
     }
-    console.log(tempArray);
+    // console.log(tempArray);
     Activity.insertMany(tempArray)
         .then(resArray => {
-            console.log(resArray);
+            // console.log(resArray);
             let idArray = [];
             for (let res of resArray) {
                 idArray.push(res._id);
             }
-            console.log(idArray);
+            // console.log(idArray);
             createDestination(idArray);
         })
         .catch(err => {
-            console.log(err);
+            res.send(err);
         })
 
     function createDestination(idArray) {
@@ -124,24 +149,24 @@ destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
             destination: activity.destination
         })
     }
-    console.log(tempArray);
+    // console.log(tempArray);
     Activity.insertMany(tempArray)
         .then(resArray => {
-            console.log(resArray);
+            // console.log(resArray);
             let idArray = [];
             for (let res of resArray) {
                 idArray.push(res._id);
             }
-            console.log(idArray);
+            // console.log(idArray);
             updateDestination(idArray);
         })
         .catch(err => {
-            console.log(err);
+            res.send(err);
         })
 
     function updateDestination(idArray) {
         req.body.activities = idArray;
-        console.log(req.body);
+        // console.log(req.body);
         // Destination.findOneAndUpdate(req.params.id, { $set: { name: req.body.name, complete: req.body.complete, published: req.body.published, activities: idArray } }, { new: true })
         Destination.findByIdAndUpdate(req.params.id, req.body, { new: true })
             // .populate("activites")
@@ -149,8 +174,7 @@ destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
                 res.send(dest);
             })
             .catch(err => {
-                console.log(err);
-                res.status(500).json({ message: 'Internal server error' })
+                res.status(500).send(err).json({ message: 'Internal server error' })
             });
     }
 });

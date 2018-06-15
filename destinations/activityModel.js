@@ -16,19 +16,14 @@ const activitySchema = mongoose.Schema({
     user: {
         type: String,
         required: true
-    },
-    destination: {
-        type: Schema.Types.ObjectId,
-        ref: 'Destination'
-}
+    }
 });
 
 // ActivitySchema.methods.serialize = function () {
 //     return {
 //         name: this.name,
 //         url: this.url,
-//         // || dummyurl,
-//         destination: this.destination
+//         // || dummyurl
 //     };
 // };
 

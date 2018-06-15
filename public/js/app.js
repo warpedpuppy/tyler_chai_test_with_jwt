@@ -1,6 +1,7 @@
 $(function () {
     const myToken = sessionStorage.getItem("token");
-    let newDestination;
+    // let myDestinations;
+    let myDestination;
     function verifyLogin() {
         $.ajax({
             url: `/api/auth/app_protected`,
@@ -68,6 +69,8 @@ $(function () {
                 "Authorization": `Bearer ${myToken}`
             }
         }).done(function (DESTINATIONS) {
+            // myDestinations = DESTINATIONS;
+            // console.log(myDestinations);
             function getMyDestinations(callbackFn) {
                 setTimeout(function () { callbackFn(DESTINATIONS) }, 100);
             };
@@ -92,7 +95,7 @@ $(function () {
         function createCard(destination) {
             let activityStr = "";
             destination.activities.forEach(activity => {
-                activityStr += `<li contenteditable="true" >${activity.name}</li>`;
+                activityStr += `<li contenteditable="true" id="i${activity._id}">${activity.name}</li>`;
             })
             return `
     <div class="card dest-card shadow hawaii-card" id="i${destination._id}">
@@ -164,13 +167,13 @@ $(function () {
                 });
             });
 
-            newDestination = { name, complete, published, activities };
+            myDestination = { name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
                 "url": "/api/destinations",
                 "method": "POST",
-                "data": newDestination,
+                "data": myDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
                 },
@@ -209,13 +212,13 @@ $(function () {
                 });
             });
 
-            newDestination = { name, complete, published, activities };
+            myDestination = { name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
                 "url": `/api/destinations/id/${id}`,
                 "method": "PUT",
-                "data": newDestination,
+                "data": myDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
                 },
@@ -232,7 +235,7 @@ $(function () {
 
         function completeCard() {
             return `
-            <h3>${newDestination.name}</h3>
+            <h3>${myDestination.name}</h3>
             <div class="close-card-button">
                 <a href="#"><i class="fa fa-times-circle"></i></a>
             </div>
@@ -247,19 +250,18 @@ $(function () {
 
         // Complete destination activity upload wizard HTML
 
-        function uploadWizard(data) {
+        function uploadWizard() {
             console.log("Upload wizard called");
             let tempActivity;
-            for (let activity of newDestination.activities) {
-                console.log(activity);
+
+            for (let activity of myDestination.activities) {
+                // console.log(`activity: `, activity);
                 if (activity.url === "") {
                     tempActivity = activity;
-                    console.log(`Data: ${data}`);
-                    tempActivity.url = data;
-                    console.log(`tempActivity.url: ${tempActivity.url}`);
-                    tempActivity = activity;
-                    console.log(activity);
-                    console.log(newDestination.activities);
+                    // tempActivity.url = data;
+                    // console.log(`tempActivity.url: ${tempActivity.url}`);
+                    // tempActivity = activity;
+                    console.log(`myDestination.activities`, myDestination.activities);
                     break;
                 }
             }
@@ -267,11 +269,14 @@ $(function () {
 
                 return
             }
+
             return `
             <h5>${tempActivity.name}</h5>
         <form ref='uploadForm' id='uploadForm' name='uploadForm'
-            action='api/destinations/upload/${newDestination.name}' method='post' 
+            action='api/destinations/upload/${myDestination.name}' method='post' 
             encType="multipart/form-data">
+              <input type="hidden" name="activityID" value="${tempActivity.id}" />
+              <input type="hidden" name="activityName" value="${tempActivity.name}" />
               <input type="file" name="file" id="file" required />
               <input type='submit' value='Upload!' />
             </form>`
@@ -289,33 +294,37 @@ $(function () {
         $("body").on("click", ".complete-button", function (e) {
             e.preventDefault();
             let cardID = $(".card-open").attr("id");
-            let id = cardID.slice(1);
             let name = $(`#${cardID} h3`).text();
+            let id = cardID.slice(1);
             let complete = true;
             let published = false;
             let activities = [];
             $(this).parent().siblings('.activitiesList').each(function () {
                 let activity = {};
                 $(this).find('li').each(function () {
-                    var current = $(this).text();
+                    var currentActivity = $(this).text();
+                    var currentActivityID = $(this).attr('id');
+                    currentActivityID = currentActivityID.slice('1');
+                    console.log(currentActivityID);
                     // Skip empty activities
-                    if (current.length > 0) {
+                    if (currentActivity.length > 0) {
                         let activity = {
-                            "name": current,
-                            "url": ""
+                            "name": currentActivity,
+                            "url": "",
+                            "id": currentActivityID
                         }
                         activities.push(activity);
                     }
                 });
             });
 
-            newDestination = { name, complete, published, activities };
+            myDestination = { id, name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
                 "url": `/api/destinations/id/${id}`,
                 "method": "PUT",
-                "data": newDestination,
+                "data": myDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
                 },
@@ -334,13 +343,14 @@ $(function () {
 
         $("body").on("submit", "#uploadForm", function (e) {
             e.preventDefault();
-            let destName = $('.card-open').children('h3').text();
             let formdata = new FormData();
+            formdata.append('activityID', $('input[name=activityID]').val());
+            formdata.append('activityName', $('input[name=activityName]').val());
             formdata.append('file', $('#file')[0].files[0]);
             $.ajax({
                 "async": true,
                 "crossDomain": true,
-                "url": `/api/destinations/upload/${destName}`,
+                "url": `/api/destinations/upload/${myDestination.name}`,
                 "method": "POST",
                 "data": formdata,
                 "processData": false,
@@ -349,8 +359,8 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 },
                 "success": function (data) {
-                    console.log(data);
-                    $('.upload-wizard').html(uploadWizard(data));
+                    console.log(`updated activity object`, data);
+                    // $('.upload-wizard').html(uploadWizard(data));
                 },
                 "error": function (err) {
                     alert(err.responseText);
