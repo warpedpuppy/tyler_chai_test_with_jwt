@@ -89,6 +89,7 @@ $(function () {
                 getAndDisplayMyDestinations();
             })
         })
+    }
 
         // Create the structure for a card
 
@@ -402,5 +403,5 @@ $(function () {
         })
 
 
-    }
+
 })
