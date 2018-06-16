@@ -38,7 +38,7 @@ $(function () {
             })
             return `
             <div class="public-dest">
-            <div class="dest-album i${destination.id}">
+            <div class="dest-album i${destination._id}">
                 <div class="dest-gradient"></div>
                 <div class="dest-img">
                     ${activityImgs}

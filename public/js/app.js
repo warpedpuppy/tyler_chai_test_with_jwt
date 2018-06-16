@@ -1,6 +1,7 @@
 $(function () {
     const myToken = sessionStorage.getItem("token");
-    let newDestination;
+    // let myDestinations;
+    let myDestination;
     function verifyLogin() {
         $.ajax({
             url: `/api/auth/app_protected`,
@@ -68,6 +69,8 @@ $(function () {
                 "Authorization": `Bearer ${myToken}`
             }
         }).done(function (DESTINATIONS) {
+            // myDestinations = DESTINATIONS;
+            // console.log(myDestinations);
             function getMyDestinations(callbackFn) {
                 setTimeout(function () { callbackFn(DESTINATIONS) }, 100);
             };
@@ -86,13 +89,14 @@ $(function () {
                 getAndDisplayMyDestinations();
             })
         })
+    }
 
         // Create the structure for a card
 
         function createCard(destination) {
             let activityStr = "";
             destination.activities.forEach(activity => {
-                activityStr += `<li contenteditable="true" >${activity.name}</li>`;
+                activityStr += `<li contenteditable="true" id="i${activity._id}">${activity.name}</li>`;
             })
             return `
     <div class="card dest-card shadow hawaii-card" id="i${destination._id}">
@@ -164,13 +168,13 @@ $(function () {
                 });
             });
 
-            newDestination = { name, complete, published, activities };
+            myDestination = { name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
                 "url": "/api/destinations",
                 "method": "POST",
-                "data": newDestination,
+                "data": myDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
                 },
@@ -209,13 +213,13 @@ $(function () {
                 });
             });
 
-            newDestination = { name, complete, published, activities };
+            myDestination = { name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
                 "url": `/api/destinations/id/${id}`,
                 "method": "PUT",
-                "data": newDestination,
+                "data": myDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
                 },
@@ -232,83 +236,50 @@ $(function () {
 
         function completeCard() {
             return `
-            <h3>${newDestination.name}</h3>
+            <h3>${myDestination.name}</h3>
             <div class="close-card-button">
                 <a href="#"><i class="fa fa-times-circle"></i></a>
             </div>
             <div class="upload-wizard">
                 <p>Great job! Now add photos of your activities and share your adventure!</p>
                 <button class="upload-wizard-start">Start</button>
-            </div>
-            <div class="add-button-container shadow">
-                <span class="add-button">+</span>
             </div>`
         }
-
-        // Complete destination activity upload wizard HTML
-
-        function uploadWizard() {
-            console.log("Upload wizard called");
-            let tempActivity;
-            for (let activity of newDestination.activities) {
-                console.log(activity.name);
-                if (activity.url === "") {
-                    tempActivity = activity;
-                    break;
-                }
-            }
-            if (!tempActivity) {
-                return
-            }
-            return `
-            <h5>${tempActivity.name}</h5>
-        <form ref='uploadForm' id='uploadForm' name='uploadForm'
-            action='api/destinations/upload/${newDestination.name}' method='post' 
-            encType="multipart/form-data">
-              <input type="file" name="file" id="file" required />
-              <input type='submit' value='Upload!' />
-            </form>`
-        }
-
-        // Complete destination activity upload wizard functionality
-
-        $('body').on('click', '.upload-wizard-start', function (e) {
-            e.preventDefault();
-            $('.upload-wizard').html(uploadWizard());
-        })
 
         // Mark the destination as complete and allow photo uploads
 
         $("body").on("click", ".complete-button", function (e) {
             e.preventDefault();
             let cardID = $(".card-open").attr("id");
-            let id = cardID.slice(1);
             let name = $(`#${cardID} h3`).text();
+            let id = cardID.slice(1);
             let complete = true;
             let published = false;
             let activities = [];
-            $(this).parent().siblings('.activitiesList').each(function () {
-                let activity = {};
-                $(this).find('li').each(function () {
-                    var current = $(this).text();
-                    // Skip empty activities
-                    if (current.length > 0) {
-                        let activity = {
-                            "name": current,
-                            "url": ""
-                        }
-                        activities.push(activity);
+            let lis = $(this).parent().siblings('.activitiesList').children();
+            lis.each(function (i, v) {
+                var currentActivity = $(this).text();
+                var currentActivityID = $(this).attr('id');
+                currentActivityID = currentActivityID.slice('1');
+                console.log(currentActivityID);
+                // Skip empty activities
+                if (currentActivity.length > 0) {
+                    let activity = {
+                        "name": currentActivity,
+                        "url": "",
+                        "id": currentActivityID
                     }
-                });
+                    activities.push(activity);
+                }
             });
 
-            newDestination = { name, complete, published, activities };
+            myDestination = { id, name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
-                "url": `/api/destinations/id/${id}`,
+                "url": `/api/destinations/id/${myDestination.id}`,
                 "method": "PUT",
-                "data": newDestination,
+                "data": myDestination,
                 "headers": {
                     "Authorization": `Bearer ${myToken}`
                 },
@@ -323,17 +294,67 @@ $(function () {
             });
         });
 
+
+        // Complete destination activity upload wizard HTML
+        function uploadWizard() {
+            console.log("Upload wizard called");
+            let tempActivity;
+            for (let activity of myDestination.activities) {
+                if (activity.url === "") {
+                    tempActivity = activity;
+                    break;
+                }
+            }
+            if (!tempActivity) {
+
+
+                // Allow publishing destination when all activities have photos
+
+                return `
+            <div class="close-card-button">
+                <a href="#"><i class="fa fa-times-circle"></i></a>
+            </div>
+            <div class="upload-wizard">
+                <p>Congratulations! Let's publish your destination album to the homepage for all to see!</p>
+                <button class="upload-wizard-publish-button">Publish</button>
+            </div>`
+
+            }
+
+            // Loop through upload form until all activities have photos
+
+            return `
+                <h5>${tempActivity.name}</h5>
+            <form ref='uploadForm' id='uploadForm' name='uploadForm'
+                action='api/destinations/upload/${myDestination.name}' method='post' 
+                encType="multipart/form-data">
+                  <input type="hidden" name="activityID" value="${tempActivity.id}" />
+                  <input type="hidden" name="activityName" value="${tempActivity.name}" />
+                  <input type="file" name="file" id="file" required />
+                  <input type='submit' value='Upload!' />
+                </form>`
+
+        }
+
+        // Complete destination activity upload wizard functionality
+
+        $('body').on('click', '.upload-wizard-start', function (e) {
+            e.preventDefault();
+            $('.upload-wizard').html(uploadWizard());
+        })
+
         // Handle photo uploader form
 
         $("body").on("submit", "#uploadForm", function (e) {
             e.preventDefault();
-            let destName = $('.card-open').children('h3').text();
             let formdata = new FormData();
+            formdata.append('activityID', $('input[name=activityID]').val());
+            formdata.append('activityName', $('input[name=activityName]').val());
             formdata.append('file', $('#file')[0].files[0]);
             $.ajax({
                 "async": true,
                 "crossDomain": true,
-                "url": `/api/destinations/upload/${destName}`,
+                "url": `/api/destinations/upload/${myDestination.name}`,
                 "method": "POST",
                 "data": formdata,
                 "processData": false,
@@ -342,7 +363,38 @@ $(function () {
                     "Authorization": `Bearer ${myToken}`
                 },
                 "success": function (data) {
+                    console.log(`updated activity object`, data);
+                    for (let activity of myDestination.activities) {
+                        if (activity.id === data._id) {
+                            activity.url = data.url;
+                            break;
+                        }
+                    }
+
                     $('.upload-wizard').html(uploadWizard());
+                },
+                "error": function (err) {
+                    alert(`error`, err.responseText);
+                }
+            });
+        })
+
+        // Publish destination 
+
+        $("body").on("click", ".upload-wizard-publish-button", function (e) {
+            e.preventDefault();
+            myDestination.published = true;
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": `/api/destinations/id/${myDestination.id}`,
+                "method": "PUT",
+                "data": myDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    alert('Your destination has been published! Check it out on the homepage!');
                 },
                 "error": function (err) {
                     alert(err.responseText);
@@ -350,5 +402,6 @@ $(function () {
             });
         })
 
-    }
+
+
 })
