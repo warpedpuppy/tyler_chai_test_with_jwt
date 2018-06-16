@@ -242,9 +242,6 @@ $(function () {
             <div class="upload-wizard">
                 <p>Great job! Now add photos of your activities and share your adventure!</p>
                 <button class="upload-wizard-start">Start</button>
-            </div>
-            <div class="add-button-container shadow">
-                <span class="add-button">+</span>
             </div>`
         }
 
@@ -258,30 +255,28 @@ $(function () {
             let complete = true;
             let published = false;
             let activities = [];
-            $(this).parent().siblings('.activitiesList').each(function () {
-                let activity = {};
-                $(this).find('li').each(function () {
-                    var currentActivity = $(this).text();
-                    var currentActivityID = $(this).attr('id');
-                    currentActivityID = currentActivityID.slice('1');
-                    console.log(currentActivityID);
-                    // Skip empty activities
-                    if (currentActivity.length > 0) {
-                        let activity = {
-                            "name": currentActivity,
-                            "url": "",
-                            "id": currentActivityID
-                        }
-                        activities.push(activity);
+            let lis = $(this).parent().siblings('.activitiesList').children();
+            lis.each(function (i, v) {
+                var currentActivity = $(this).text();
+                var currentActivityID = $(this).attr('id');
+                currentActivityID = currentActivityID.slice('1');
+                console.log(currentActivityID);
+                // Skip empty activities
+                if (currentActivity.length > 0) {
+                    let activity = {
+                        "name": currentActivity,
+                        "url": "",
+                        "id": currentActivityID
                     }
-                });
+                    activities.push(activity);
+                }
             });
 
             myDestination = { id, name, complete, published, activities };
             $.ajax({
                 "async": true,
                 "crossDomain": true,
-                "url": `/api/destinations/id/${id}`,
+                "url": `/api/destinations/id/${myDestination.id}`,
                 "method": "PUT",
                 "data": myDestination,
                 "headers": {
@@ -303,7 +298,6 @@ $(function () {
         function uploadWizard() {
             console.log("Upload wizard called");
             let tempActivity;
-
             for (let activity of myDestination.activities) {
                 if (activity.url === "") {
                     tempActivity = activity;
@@ -312,19 +306,33 @@ $(function () {
             }
             if (!tempActivity) {
 
-                return
+
+                // Allow publishing destination when all activities have photos
+
+                return `
+            <div class="close-card-button">
+                <a href="#"><i class="fa fa-times-circle"></i></a>
+            </div>
+            <div class="upload-wizard">
+                <p>Congratulations! Let's publish your destination album to the homepage for all to see!</p>
+                <button class="upload-wizard-publish-button">Publish</button>
+            </div>`
+
             }
 
+            // Loop through upload form until all activities have photos
+
             return `
-            <h5>${tempActivity.name}</h5>
-        <form ref='uploadForm' id='uploadForm' name='uploadForm'
-            action='api/destinations/upload/${myDestination.name}' method='post' 
-            encType="multipart/form-data">
-              <input type="hidden" name="activityID" value="${tempActivity.id}" />
-              <input type="hidden" name="activityName" value="${tempActivity.name}" />
-              <input type="file" name="file" id="file" required />
-              <input type='submit' value='Upload!' />
-            </form>`
+                <h5>${tempActivity.name}</h5>
+            <form ref='uploadForm' id='uploadForm' name='uploadForm'
+                action='api/destinations/upload/${myDestination.name}' method='post' 
+                encType="multipart/form-data">
+                  <input type="hidden" name="activityID" value="${tempActivity.id}" />
+                  <input type="hidden" name="activityName" value="${tempActivity.name}" />
+                  <input type="file" name="file" id="file" required />
+                  <input type='submit' value='Upload!' />
+                </form>`
+
         }
 
         // Complete destination activity upload wizard functionality
@@ -355,13 +363,44 @@ $(function () {
                 },
                 "success": function (data) {
                     console.log(`updated activity object`, data);
-                    // $('.upload-wizard').html(uploadWizard(data));
+                    for (let activity of myDestination.activities) {
+                        if (activity.id === data._id) {
+                            activity.url = data.url;
+                            break;
+                        }
+                    }
+
+                    $('.upload-wizard').html(uploadWizard());
+                },
+                "error": function (err) {
+                    alert(`error`, err.responseText);
+                }
+            });
+        })
+
+        // Publish destination 
+
+        $("body").on("click", ".upload-wizard-publish-button", function (e) {
+            e.preventDefault();
+            myDestination.published = true;
+            $.ajax({
+                "async": true,
+                "crossDomain": true,
+                "url": `/api/destinations/id/${myDestination.id}`,
+                "method": "PUT",
+                "data": myDestination,
+                "headers": {
+                    "Authorization": `Bearer ${myToken}`
+                },
+                "success": function () {
+                    alert('Your destination has been published! Check it out on the homepage!');
                 },
                 "error": function (err) {
                     alert(err.responseText);
                 }
             });
         })
+
 
     }
 })
