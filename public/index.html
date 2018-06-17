@@ -11,88 +11,80 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:700" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/login-modal.css">
+    <link rel="stylesheet" href="css/shared.css">
 
 </head>
 
 <body>
     <header role="header">
         <div class="user-menu">
-            <span class="login-link"><a href="#">Sign In</a></span>
+            <span class="login-link">
+                <a href="#">Sign In</a>
+            </span>
         </div>
         <div class="hero-container">
             <h1>
                 <i class="fa fa-suitcase"></i> My Destination Diary
             </h1>
+            <button class="help-button">What's this?</button>
         </div>
     </header>
     <main role="main" class="dest-section">
         <h2>Where have people been travelling?</h2>
-        <div class="public-dest">
-            <div class="dest-album">
-                <div class="dest-gradient"></div>
-                <div class="dest-img">
-                    <img src="img/img1.jpg">
-                    <img src="img/img2.jpg">
-                    <img src="img/img3.jpg">
-                    <img src="img/img4.jpg">
-                    <img src="img/img5.jpg">
-                </div>
-                <div class="dest-label">
-                    <h3 class="dest-name">Toronto</h3>
-                    <p class="dest-author">
-                        <i class="fa fa-user-circle"></i> Mike Myers
-                    </p>
-                </div>
+    </main>
+    <div class="modal login-modal hide-me">
+            <div class="close-card-button">
+                <a href="#">
+                    <i class="fa fa-times-circle"></i>
+                </a>
+            </div>
+            <p class="login-menu">
+                <span class="login-tab login-menu-active">
+                    <a href="#">Login</a>
+                </span> |
+                <span class="register-tab login-menu-passive">
+                    <a href="#">Register</a>
+                </span>
+            </p>
+            <form id="login-form">
+                <label for="username">Username</label>
+                <input id="username" type="text">
+                <label for="password">Password</label>
+                <input id="password" type="password">
+                <button>Sign in</button>
+                <p id="login-error" class="error"> </p>
+            </form>
+            <form id="register-form" class="hide-me">
+                <label for="name">Name</label>
+                <input id="new-name" type="text">
+                <label for="new-username">Username</label>
+                <input id="new-username" type="text">
+                <label for="password">Password</label>
+                <input id="new-password" type="password">
+                <button>Register</button>
+                <p id="register-error" class="error"> </p>
+            </form>
+            <div id="register-success" class="hide-me">
+                <p>Your account was created successfully.</p>
+                <button>Log In</button>
             </div>
         </div>
-        <div class="public-dest">
-                <div class="dest-album">
-                    <div class="dest-gradient"></div>
-                    <div class="dest-img">
-                        <img src="img/img1.jpg">
-                        <img src="img/img2.jpg">
-                        <img src="img/img3.jpg">
-                        <img src="img/img4.jpg">
-                        <img src="img/img5.jpg">
-                    </div>
-                    <div class="dest-label">
-                        <h3 class="dest-name">Orlando, FL</h3>
-                        <p class="dest-author">
-                            <i class="fa fa-user-circle"></i> Wayne Brady
-                        </p>
-                    </div>
-                </div>
+        <div class="modal help-modal hide-me">
+            <div class="close-card-button">
+                <a href="#">
+                    <i class="fa fa-times-circle"></i>
+                </a>
             </div>
-            <div class="login-modal hide-me">
-                <div class="close-card-button">
-                        <a href="#">
-                            <i class="fa fa-times-circle"></i>
-                        </a>
-                    </div>
-                <p class="login-menu"><span class="login-tab login-menu-active"><a href="#">Login</a></span> | <span class="register-tab login-menu-passive"><a href="#">Register</a></span></p>
-                <form id="login-form">
-                    <label for="username">Username</label><input id="username" type="text">
-                    <label for="password">Password</label><input id="password" type="password">
-                    <button>Sign in</button>
-                    <p id="login-error" class="error"> </p>
-                </form>
-                <form id="register-form" class="hide-me">
-                    <label for="name">Name</label><input id="new-name" type="text">                    
-                    <label for="new-username">Username</label><input id="new-username" type="text">
-                    <label for="password">Password</label><input id="new-password" type="password">
-                    <button>Register</button>
-                    <p id="register-error" class="error"> </p>
-                </form>
-                <div id="register-success" class="hide-me">
-                    <p>Your account was created successfully.</p>
-                    <button>Log In</button>
-                </div>
-            </div>
-    </main>
+            <h4>Start Your Travel Bucket List</h4>
+            <p>Create your own travel book. You can save all the places you want to go and all the things you want to do there.</p>
+            <h4>Share Your Journey</h4>
+            <p>When you complete your destination, upload photos of the activities you completed there and share them for everyone to see!</p>
+            <h4>Ready to see the world?</h4>
+            <button>Start Your Journey</button>
+        </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/login-modal.js"></script>
+    <script src="js/shared.js"></script>
 </body>
 
 </html>

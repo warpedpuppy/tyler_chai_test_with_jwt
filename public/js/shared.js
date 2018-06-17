@@ -1,15 +1,20 @@
 'use strict'
-$("body").on("click", ".login-link", function (e) {
-    e.preventDefault();
-    $(".login-modal").removeClass("hide-me");
-});
+
+// Modal
 
 $("body").on("click", ".close-card-button", function (e) {
     e.preventDefault();
-    $(".login-modal").addClass("hide-me");
+    $(".modal").addClass("hide-me");
     $(".login-modal input").val("");
     $("#register-success").addClass("hide-me");
     $("#login-error, #register-error").html("");
+});
+
+// Login modal
+
+$("body").on("click", ".login-link", function (e) {
+    e.preventDefault();
+    $(".login-modal").removeClass("hide-me");
 });
 
 $("body").on("click", ".register-tab", function (e) {
@@ -37,6 +42,8 @@ $("body").on("click", "#register-success > button", function (e) {
     $(".register-tab").removeClass("login-menu-active").addClass("login-menu-passive");
 });
 
+// Registration form
+
 $("#register-form").submit(function (e) {
     e.preventDefault();
     let newUser = {
@@ -62,6 +69,8 @@ $("#register-form").submit(function (e) {
     });
 
 });
+
+// Login form
 
 $("#login-form").submit(function (e) {
     e.preventDefault();
@@ -93,3 +102,10 @@ $("#login-form").submit(function (e) {
         }
     }
 })
+
+// Help modal
+
+$("body").on("click", ".help-button", function (e) {
+    e.preventDefault();
+    $(".help-modal").removeClass("hide-me");
+});

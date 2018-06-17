@@ -2,6 +2,8 @@
 
 $(function () {
 
+    // Display published destination albums
+
     function loadHomepage() {
 
         $.ajax({
@@ -29,7 +31,7 @@ $(function () {
             })
         })
 
-        // Create the structure for a card
+        // Destination album
 
         function createAlbum(destination) {
             let activityImgs = "";
@@ -57,4 +59,17 @@ $(function () {
     }
     loadHomepage();
 
+});
+
+// Display Help Modal
+
+$("body").on("click", ".help-modal button", function (e) {
+    e.preventDefault();
+    $(".help-modal").addClass("hide-me");
+    $(".login-modal").removeClass("hide-me");
+    $("#login-form").addClass("hide-me");
+    $("#register-form").removeClass("hide-me");
+    $(".register-tab").addClass("login-menu-active").removeClass("login-menu-passive");
+    $(".login-tab").removeClass("login-menu-active").addClass("login-menu-passive");
+    $("#register-success").addClass("hide-me");
 });

@@ -1,5 +1,5 @@
 body {
-    background: url('../img/cork.jpg') repeat;
+    background: url('../img/bg-app.jpg') repeat;
     color: white;
     font-family: Roboto, sans-serif;
     margin: 0;
@@ -9,7 +9,6 @@ body {
 .container {
     width: 90%;
     margin: 0 auto;
-    padding-top;
 }
 
 header {
@@ -42,7 +41,7 @@ header {
 #nav-bar a:hover,
 #nav-bar a:visited {
     color: #fff;
-    x
+    text-decoration: none;
 }
 
 .hide-me {
@@ -98,6 +97,10 @@ h1 {
     padding: 1em auto 1em auto;
 }
 
+.upload-wizard {
+    text-align: center;
+}
+
 @media (min-width: 700px) {
     .card {
         width: 40%;
@@ -112,7 +115,7 @@ h1 {
     }
 }
 
-.add-button-container {
+/* .add-button-container {
     background: #F44336;
     border-radius: 50%;
     position: absolute;
@@ -130,4 +133,4 @@ h1 {
     border: none;
     text-decoration: none;
     text-align: center;
-}
+} */

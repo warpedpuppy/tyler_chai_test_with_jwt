@@ -1,17 +1,20 @@
-.login-modal {
+.modal {
     background: #fff;
     color: #000;
     position: fixed;
-    top: 55%;
+    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     max-width: 500px;
     width: 70%;
+    max-height: 80%;
     margin: 0;
     border-radius: 7px;
     font-size: 1.5em;
     padding: 50px;
     padding-bottom: 50px;
+    z-index: 2;
+    overflow: scroll;
 }
 
 .close-card-button {
@@ -39,29 +42,15 @@
 .login-menu-active>a,
 .login-menu-active>a:visited,
 .login-menu-active>a:active {
+    color: #000;
     text-decoration: none;
 }
 
 .login-menu-passive>a,
 .login-menu-passive>a:visited,
 .login-menu-passive>a:active {
+    color: #000;
     text-decoration: underline;
-}
-
-button {
-    text-decoration: none;
-    color: #fff;
-    background-color: #F44336;
-    text-align: center;
-    letter-spacing: .5px;
-    border: none;
-    display: inline-block;
-    height: 52px;
-    font-size: .75em;
-    line-height: 22px;
-    padding: 15px 32px;
-    width: 100%;
-    text-transform: uppercase;
 }
 
 input {
@@ -137,6 +126,10 @@ button {
     padding: 7px 32px;
     text-transform: uppercase;
     border-radius: 28px;
+}
+
+.modal button {
+    width: 100%;
 }
 
 .card-button {

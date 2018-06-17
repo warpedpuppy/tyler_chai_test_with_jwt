@@ -24,21 +24,26 @@ header {
     position: relative;
     height: 400px;
     overflow: hidden;
+    background: url('/img/bg-hero.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
 }
 
-#hero-container {
+.hero-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100%;
-    margin-left: 75px;
+    width: 400px;
+    text-align: center;
 }
 
 h1 {
     font-family: Raleway, Roboto, sans-serif;
     font-weight: 700;
     font-size: 2em;
+    color: #fff;
 }
 
 h2 {
