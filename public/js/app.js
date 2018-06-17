@@ -101,9 +101,9 @@ $(function () {
                 <button class="save-button">Save</button>
                 <button class="complete-button">Complete</button>
             </div>
-            <h3 contenteditable="true" placeholder="Where would you like to go!?"></h3>
-            <ul class="activitiesList">
-                <li contenteditable="true" placeholder="What should we do there?"></li>
+            <input type="text" class="dest-title" placeholder="Where would you like to go!?" />
+            <ul class="activities-list">
+                <li><input type="text" class="activity" placeholder="What should we do there?" value="" /><span class="delete-activity hide-me"><i class="fa fa-minus-circle"></i></span></li>
             </ul>
             <div class="card-button hide-me">
                 <a href="#">
@@ -119,7 +119,7 @@ $(function () {
     function createCard(destination) {
         let activityStr = "";
         destination.activities.forEach(activity => {
-            activityStr += `<li contenteditable="true" id="i${activity._id}">${activity.name}</li>`;
+            activityStr += `<li id="i${activity._id}"><input type="text" value="${activity.name}" /><span class="delete-activity hide-me"><i class="fa fa-minus-circle"></i></li>`;
         })
         return `
     <div class="card dest-card shadow hawaii-card" id="i${destination._id}">
@@ -129,8 +129,8 @@ $(function () {
         <div class="card-button hide-me">
             <button class="update-button">Save</button> <button class="complete-button">Complete</button>
         </div>
-        <h3 contenteditable="true">${destination.name}</h3>
-        <ul class="activitiesList">${activityStr}</ul>
+        <input type="text" class="dest-title" value="${destination.name}" />
+        <ul class="activities-list">${activityStr}</ul>
         <div class="card-button hide-me">
         <a href="#">
             <i class="fa check-circle"></i>
@@ -144,7 +144,7 @@ $(function () {
     $("body").on("click", ".card", function (e) {
         e.preventDefault();
         $(this).addClass("card-open").removeClass("card");
-        $(".close-card-button, .card-button").removeClass("hide-me");
+        $(".close-card-button, .card-button, .delete-activity").removeClass("hide-me");
         $(".card, .h1").addClass("hide-me");
     });
 
@@ -152,34 +152,42 @@ $(function () {
 
     $("body").on("click", ".close-card-button", function (e) {
         e.preventDefault();
-        $(".close-card-button, .card-button").addClass("hide-me");
+        $(".close-card-button, .card-button, .delete-activity").addClass("hide-me");
         $(".card-open").removeClass("card-open").addClass("card");
         $(".card").removeClass("hide-me");
     });
 
     // Create a new activity
 
-    const newListItem = `<li contenteditable="true"></li>`
-    $("body").on("keydown", ".activitiesList", function (e) {
+    const newListItem = `<li><input type="text" class="activity"  value="" /><span class="delete-activity"><i class="fa fa-minus-circle"></i></span></li>`
+    $("body").on("keydown", ".activities-list", function (e) {
         if (e.keyCode === 13) {
             e.preventDefault();
             $(this).append(newListItem);
+            $(".card-open .activities-list input").last().focus();
         }
+    });
+
+    // Delete an activity
+
+    $("body").on("click", ".delete-activity", function(e) {
+        e.preventDefault();
+        $(this).parent().remove();
     });
 
     // Save a new destination by POST
 
     $("body").on("click", ".save-button", function (e) {
         e.preventDefault();
-        let name = $(this).parent().siblings("h3").text();
+        let name = $(this).parent().siblings(".dest-title").val();
         let complete = false;
         let published = false;
 
         let activities = [];
-        $(this).parent().siblings('.activitiesList').each(function () {
+        $(this).parent().siblings('.activities-list').each(function () {
             let activity = {};
-            $(this).find('li').each(function () {
-                var current = $(this).text();
+            $(this).find('li > input').each(function () {
+                var current = $(this).val();
                 // Skip empty activities
                 if (current.length > 0) {
                     let activity = {
@@ -216,15 +224,15 @@ $(function () {
         e.preventDefault();
         let cardID = $(".card-open").attr("id");
         let id = cardID.slice(1);
-        let name = $(`#${cardID} h3`).text();
+        let name = $(`#${cardID} .dest-title`).val();
         let complete = false;
         let published = false;
 
         let activities = [];
-        $(this).parent().siblings('.activitiesList').each(function () {
+        $(this).parent().siblings('.activities-list').each(function () {
             let activity = {};
-            $(this).find('li').each(function () {
-                var current = $(this).text();
+            $(this).find('li > input').each(function () {
+                var current = $(this).val();
                 // Skip empty activities
                 if (current.length > 0) {
                     let activity = {
@@ -274,14 +282,14 @@ $(function () {
     $("body").on("click", ".complete-button", function (e) {
         e.preventDefault();
         let cardID = $(".card-open").attr("id");
-        let name = $(`#${cardID} h3`).text();
+        let name = $(`#${cardID} .dest-title`).val();
         let id = cardID.slice(1);
         let complete = true;
         let published = false;
         let activities = [];
-        let lis = $(this).parent().siblings('.activitiesList').children();
+        let lis = $(this).parent().siblings('.activities-list').children();
         lis.each(function (i, v) {
-            var currentActivity = $(this).text();
+            var currentActivity = $(this).find("input").val();
             var currentActivityID = $(this).attr('id');
             currentActivityID = currentActivityID.slice('1');
             console.log(currentActivityID);
@@ -307,7 +315,7 @@ $(function () {
                 "Authorization": `Bearer ${myToken}`
             },
             "success": function () {
-                myDestination.name = $(`#${cardID} h3`).text();
+                myDestination.name = $(`#${cardID} .dest-title`).val();
                 $(".card-open").children().hide();
                 $(".card-open").append(completeCard());
             },
