@@ -4,6 +4,7 @@ body {
     font-family: Roboto, sans-serif;
     margin: 0;
     padding: 115px 0 0 0;
+    min-width: 485px;
 }
 
 .container {
@@ -25,6 +26,7 @@ header {
     font-size: 1.5em;
     line-height: 64px;
     width: 100%;
+    min-width: 485px;
 }
 
 #nav-bar {
@@ -60,9 +62,10 @@ h1 {
 .card {
     border-radius: 7px;
     margin: 2.5%;
-    padding: 15px;
+    padding: 2.5% 2.5%;
     height: 175px;
     position: relative;
+    overflow: hidden;
 }
 
 .new-dest-card {
@@ -78,11 +81,30 @@ h1 {
 }
 
 .card input, .card-open input {
-    width: 90%;
+    width: 85%;
+}
+
+.dest-title {
+    font-size: 1.5em;
+    margin: 0 0 10px 0;
+}
+
+.card-open .dest-title {
+    margin: 1em 0 0 .75em;
+    height: 2em;
+}
+
+.activities-list {
+    padding-left: 2.5em;
 }
 
 .activities-list input {
+    font-size: 1em;
     height: 1em;
+}
+
+.activities-list li:first-child .delete-activity {
+    display: none;
 }
 
 .delete-activity {
