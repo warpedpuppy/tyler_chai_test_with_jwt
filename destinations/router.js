@@ -29,12 +29,10 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
         //     fs.mkdirSync(dir);
         // }
         let fileExt = `.${files.file.type.slice(6)}`;
-        // console.log(fileExt);
+        console.log(fileExt);
         var newpath = `./public/img/destinations/${req.user.username}-${req.params.destTitle}-${fields.activityID}${fileExt}`;
         let newurl = `/img/destinations/${req.user.username}-${req.params.destTitle}-${fields.activityID}${fileExt}`;
-        // if (fs.existsSync(newpath)) {
-        //     res.status(500).send('A file with that name already exists for this destination. Rename the file and try the upload again.');
-        // } else {
+        if (fileExt == ".jpeg" || fileExt == ".png" || fileExt == ".gif") {
             fs.rename(oldpath, newpath, function (err) {
                 if (err) throw err;
                 // res.send(newpath);
@@ -51,7 +49,10 @@ destinationsRouter.post('/upload/:destTitle', [jsonParser, jwtAuth], function (r
                     res.send(err);
                 })
             });
-        // }
+
+         } else {
+            res.status(500).json('The file you sent is not a valid image file. Please choose a jpeg, png, or gif file and try again.');
+        }
     });
 
 })
@@ -72,7 +73,6 @@ destinationsRouter.get('/activities/:activityID', jsonParser, (req, res) => {
 
 destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
     let { name, complete, published, activities } = req.body;
-
     name = name.trim();
 
     let tempArray = [];
@@ -179,9 +179,17 @@ destinationsRouter.put('/id/:id', [jsonParser, jwtAuth], (req, res) => {
     }
 });
 
-// Remove a destination by name on DELETE
+// Remove a destination by ID on DELETE
 
 destinationsRouter.delete('/id/:id', [jsonParser, jwtAuth], (req, res) => {
+    console.log('req.body', req.body)
+    for (let activity of req.body.activities) {
+        console.log(activity.id);
+        Activity.findOneAndRemove({ _id: activity.id })
+        .then(activity => console.log(`${activity.id} deleted.`))
+        .catch(err => res.status(500).send({ message: 'Internal server error.', error: err}));
+        console.log(`activity`, activity);
+    }
     Destination.findOneAndRemove({ _id: req.params.id })
         .then(dest => res.send(`${req.params.id} deleted.`))
         .catch(err => res.status(500).json({ message: 'Internal server error' }));

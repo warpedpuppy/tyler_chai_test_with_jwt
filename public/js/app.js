@@ -38,6 +38,7 @@ $(function () {
     $("body").on("click", ".help-button", function (e) {
         e.preventDefault();
         $(".help-modal").removeClass("hide-me");
+        $(".help-modal .close-card-button").removeClass("hide-me");
     });    
 
     // Close help modal
@@ -92,24 +93,16 @@ $(function () {
 
     const newCard = function () {
         return `<div class="card new-dest-card shadow">
-            <div class="close-card-button hide-me">
-                <a href="#">
-                    <i class="fa fa-times-circle"></i>
-                </a>
+            <div class="close-card-button card-button hide-me">
+                <a href="#"><i class="fa fa-times-circle" aria-label="Close card button" title="Close"></i></a>
             </div>
-            <div class="card-button hide-me">
-                <button class="save-button">Save</button>
-                <button class="complete-button">Complete</button>
+            <div class="card-toolbar">
+            <span class="card-button hide-me"><a href="#"><i class="fa fa-floppy-o save-button" aria-label="Save card button" title="Save"></i></a></span>
             </div>
-            <input type="text" class="dest-title" placeholder="Where would you like to go!?" />
+            <input type="text" class="dest-title" placeholder="Where would you like to go!?" /><span class="delete-dest-button red-hover hide-me"><i class="fa fa-minus-trash"></i></span>
             <ul class="activities-list">
-                <li><input type="text" class="activity" placeholder="What should we do there?" value="" /><span class="delete-activity hide-me"><i class="fa fa-minus-circle"></i></span></li>
+                <li><input type="text" class="activity" placeholder="What should we do there?" value="" /><span class="delete-activity red-hover-button  card-button hide-me"><i class="fa fa-minus-circle"></i></span></li>
             </ul>
-            <div class="card-button hide-me">
-                <a href="#">
-                    <i class="fa check-circle"></i>
-                </a>
-            </div>
         </div>`
     };
 
@@ -119,21 +112,23 @@ $(function () {
     function createCard(destination) {
         let activityStr = "";
         destination.activities.forEach(activity => {
-            activityStr += `<li id="i${activity._id}"><input type="text" value="${activity.name}" /><span class="delete-activity hide-me"><i class="fa fa-minus-circle"></i></li>`;
+            activityStr += `<li id="i${activity._id}"><input type="text" value="${activity.name}" /><span class="delete-activity red-hover-button  card-button hide-me"><a href=""><i class="fa fa-minus-circle"></a></i></li>`;
         })
         return `
     <div class="card dest-card shadow hawaii-card" id="i${destination._id}">
-        <div class="close-card-button hide-me">
+        <div class="close-card-button card-button hide-me">
             <a href="#"><i class="fa fa-times-circle"></i></a>
         </div>
-        <div class="card-button hide-me">
-            <button class="update-button">Save</button> <button class="complete-button">Complete</button>
-        </div>
+        <div class="card-toolbar">
+            <span class="delete-dest-button red-hover-button card-button hide-me"><a href="#"><i class="fa fa-trash" aria-label="Delete card button" title="Delete"></i></a></span>
+            <span class="card-button hide-me"><a href="#"><i class="fa fa-floppy-o update-button" aria-label="Save card button" title="Save"></i></a></span>
+            <span class="card-button hide-me"><a href="#"><i class="fa fa-check-circle-o complete-button" aria-label="Complete card button" title="Complete"></i></a></span>
+            </div>
         <input type="text" class="dest-title" value="${destination.name}" />
         <ul class="activities-list">${activityStr}</ul>
         <div class="card-button hide-me">
         <a href="#">
-            <i class="fa check-circle"></i>
+            <i class="fa check-circle card-button"></i>
         </a>
     </div>
     </div>`
@@ -159,7 +154,7 @@ $(function () {
 
     // Create a new activity
 
-    const newListItem = `<li><input type="text" class="activity"  value="" /><span class="delete-activity"><i class="fa fa-minus-circle"></i></span></li>`
+    const newListItem = `<li><input type="text" class="activity"  value="" /><span class="delete-activity red-hover-button"><i class="fa fa-minus-circle"></i></span></li>`
     $("body").on("keydown", ".activities-list", function (e) {
         if (e.keyCode === 13) {
             e.preventDefault();
@@ -179,14 +174,14 @@ $(function () {
 
     $("body").on("click", ".save-button", function (e) {
         e.preventDefault();
-        let name = $(this).parent().siblings(".dest-title").val();
+        let name = $(".card-open .dest-title").val();
         let complete = false;
         let published = false;
 
         let activities = [];
-        $(this).parent().siblings('.activities-list').each(function () {
+        $('.card-open .activities-list').each(function () {
             let activity = {};
-            $(this).find('li > input').each(function () {
+            $(".card-open .activities-list").find('li > input').each(function () {
                 var current = $(this).val();
                 // Skip empty activities
                 if (current.length > 0) {
@@ -200,6 +195,7 @@ $(function () {
         });
 
         myDestination = { name, complete, published, activities };
+
         $.ajax({
             "async": true,
             "crossDomain": true,
@@ -229,7 +225,7 @@ $(function () {
         let published = false;
 
         let activities = [];
-        $(this).parent().siblings('.activities-list').each(function () {
+        $('.card-open .activities-list').each(function () {
             let activity = {};
             $(this).find('li > input').each(function () {
                 var current = $(this).val();
@@ -268,7 +264,7 @@ $(function () {
     function completeCard() {
         return `
             <h3>${myDestination.name}</h3>
-            <div class="close-card-button">
+            <div class="close-card-button card-button">
                 <a href="#"><i class="fa fa-times-circle"></i></a>
             </div>
             <div class="upload-wizard">
@@ -287,7 +283,7 @@ $(function () {
         let complete = true;
         let published = false;
         let activities = [];
-        let lis = $(this).parent().siblings('.activities-list').children();
+        let lis = $('.card-open .activities-list').children();
         lis.each(function (i, v) {
             var currentActivity = $(this).find("input").val();
             var currentActivityID = $(this).attr('id');
@@ -342,7 +338,7 @@ $(function () {
             // Allow publishing destination when all activities have photos
 
             return `
-            <div class="close-card-button">
+            <div class="close-card-button card-button">
                 <a href="#"><i class="fa fa-times-circle"></i></a>
             </div>
             <div class="upload-wizard">
@@ -406,7 +402,7 @@ $(function () {
                 $('.upload-wizard').html(uploadWizard());
             },
             "error": function (err) {
-                alert(`error`, err.responseText);
+                alert(err.responseText);
             }
         });
     })
@@ -427,6 +423,7 @@ $(function () {
             },
             "success": function () {
                 alert('Your destination has been published! Check it out on the homepage!');
+                loadApp();
             },
             "error": function (err) {
                 alert(err.responseText);
@@ -434,6 +431,50 @@ $(function () {
         });
     })
 
+    // Delete destination 
 
+    $("body").on("click", ".delete-dest-button", function (e) {
+        e.preventDefault();
+        let cardID = $(".card-open").attr("id");
+        let id = cardID.slice(1);
+        let activities = [];
+        $('.card-open .activities-list').each(function () {
+            let activity = {};
+            $(this).find('li').each(function () {
+                var current = $(this).attr("id");
+                current = current.slice(1);
+
+                // Skip empty activities
+                if (current.length > 0) {
+                    let activity = {
+                        "id": current,
+                    }
+                    activities.push(activity);
+                }
+            });
+        });
+
+        myDestination = {id, activities};
+
+        $.ajax({
+            "async": true,
+            "crossDomain": true,
+            "url": `/api/destinations/id/${myDestination.id}`,
+            "method": "DELETE",
+            "data": myDestination,
+            "headers": {
+                "Authorization": `Bearer ${myToken}`
+            },
+            "success": function () {
+                alert('Destination deleted.');
+                loadApp();
+            },
+            "error": function (err) {
+                console.log(id);
+                alert(err.responseText);
+                console.log(err);
+            }
+        });
+    })
 
 })

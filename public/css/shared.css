@@ -23,15 +23,9 @@
     right: 15px;
 }
 
-.close-card-button>a,
-.close-card-button>a:visited,
-.close-card-buttona>a:active {
-    color: darkslategrey;
-}
-
-.close-card-button>a,
-.close-card-button>a:visited,
-.close-card-buttona>a:active {
+.card a,
+.card a:visited,
+.card a:active {
     color: darkslategrey;
 }
 
@@ -63,7 +57,6 @@ input {
     width: 100%;
     font-size: 1rem;
     margin: 0 0 20px 0;
-    padding: 0;
     -webkit-box-shadow: none;
     box-shadow: none;
     -webkit-box-sizing: content-box;
@@ -83,33 +76,20 @@ input {
     text-align: center;
 }
 
-.card-open {
-    position: fixed;
-    top: 55%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    height: 70%;
-    margin: 0;
-    border-radius: 7px;
-    font-size: 2em;
-    padding: 30px;
-}
-
 .close-card-button {
     position: absolute;
     top: 15px;
     right: 15px;
 }
 
-.close-card-button>a,
-.close-card-button>a:visited,
-.close-card-buttona>a:active {
+.card-button>a,
+.card-button>a:visited,
+.card-buttona>a:active {
     color: darkslategray;
 }
 
-.close-card-button>a:hover {
-    color: #F44336;
+.card-button>a:hover {
+    color: #fff;
 }
 
 button {
@@ -130,10 +110,4 @@ button {
 
 .modal button {
     width: 100%;
-}
-
-.card-button {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
 }
