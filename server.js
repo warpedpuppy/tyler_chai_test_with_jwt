@@ -37,15 +37,15 @@ app.use('*', (req, res) => {
 
 let server;
 
-function runServer() {
+function runServer(databaseUrl, port = PORT) {
   return new Promise((resolve, reject) => {
-    mongoose.connect(DATABASE_URL, err => {
+    mongoose.connect(databaseUrl, err => {
       if (err) {
         return reject(err);
       }
       server = app
-        .listen(PORT, () => {
-          console.log(`App is listening on port ${PORT}`);
+        .listen(port, () => {
+          console.log(`App is listening on port ${port}`);
           resolve();
         })
         .on('error', err => {
@@ -71,7 +71,7 @@ function closeServer() {
 }
 
 if (require.main === module) {
-  runServer().catch(err => console.error(err));
+  runServer(DATABASE_URL).catch(err => console.error(err));
 }
 
 module.exports = { app, runServer, closeServer };

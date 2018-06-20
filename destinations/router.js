@@ -80,19 +80,16 @@ destinationsRouter.post('/', [jsonParser, jwtAuth], (req, res) => {
         tempArray.push({
             name: activity.name,
             url: activity.url,
-            user: req.user.username,
-            destination: activity.destination
+            user: req.user.username
         })
     }
-    // console.log(tempArray);
+
     Activity.insertMany(tempArray)
         .then(resArray => {
-            // console.log(resArray);
             let idArray = [];
             for (let res of resArray) {
                 idArray.push(res._id);
             }
-            // console.log(idArray);
             createDestination(idArray);
         })
         .catch(err => {
