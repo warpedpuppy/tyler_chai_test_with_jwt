@@ -4,6 +4,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const mongoose = require('mongoose');
+var request = require('supertest');
 
 const expect = chai.expect;
 
@@ -13,18 +14,26 @@ const { TEST_DATABASE_URL } = require('../config');
 
 chai.use(chaiHttp);
 
+// Test user
+
+const userCredentials = {
+    "username": "test",
+    "name": "Test",
+    "password": "ddtesting0622"
+}
+
 // Seed database with random data
+
+let seedData = [],
+    total = 10,
+    counter = 0;
 
 function seedDestinationData() {
     console.info('Seeding destination data');
-    let seedData = [];
 
-    for (let i = 0; i <= 10; i++) {
-        seedData.push(generateDestinationData());
+    for (let i = 0; i <= total; i++) {
+        generateDestinationData();
     }
-
-    console.log(`seedData equals`, JSON.stringify(seedData, null, 4));
-    return Destination.insertMany(seedData);
 }
 
 // Generate an activity object
@@ -67,7 +76,13 @@ function generateDestinationData() {
             for (let res of resArray) {
                 idArray.push(res._id);
             };
-            return generateDestination(idArray, username);
+            let destinationData = generateDestination(idArray, username);
+            seedData.push(destinationData);
+            counter++;
+            if (counter === total) {
+                Destination.insertMany(seedData);
+            }
+            // return generateDestination(idArray, username);
         })
         .catch(err => {
             throw err;
@@ -81,30 +96,155 @@ function tearDownDb() {
     return mongoose.connection.dropDatabase();
 }
 
+// var authenticatedUser = request.agent(app);
+
+// var auth = {};
+
+function getToken(auth) {
+    return function (done) {
+        request
+            .post('/auth/local')
+            .send(userCredentials)
+            .expect(200)
+            .end(onResponse);
+
+        function onResponse(err, res) {
+            auth.token = res.body.token;
+            return done();
+        }
+    };
+}
+
+let auth = {};
+
+function registerAndGetToken() {
+    chai.request(app)
+        .post('/api/users')
+        .send(userCredentials)
+        .then(function(res){
+            console.log(`res`, res);
+            auth.token = res.body.authToken;
+        })
+        .done(function() {
+            getToken();
+        })
+        .catch(function(err) {
+            console.log(err);
+        })
+    }
+
 describe('Destination Diary API', function () {
 
     before(function () {
-        return runServer(TEST_DATABASE_URL);
-    });
+        //     request
+        //         .post('api/auth/login')
+        //         .send(userCredentials)
+        //         .end(function (err, response) {
+        //             expect(response.statusCode).to.equal(200);
+        //             done();
+        //         });
+
+            // before(loginUser(auth));
+            registerAndGetToken();
+            console.log(`auth.token`, auth.token);
+
+            // console.log(auth.token);
+            // auth.token = res.body.token;
+
+            return runServer(TEST_DATABASE_URL);
+        });
     beforeEach(function () {
         return seedDestinationData();
     })
     afterEach(function () {
-        return tearDownDb();
+        // return tearDownDb();
     })
     after(function () {
         return closeServer();
     });
 
-    // describe('User GET endpoint'), function () {
+    // describe('Protected destinations endpoint', function () {
 
-    it('Should have status OK', function () {
-        return chai.request(app)
-            .get('/api/destinations')
-            .then(function (res) {
-                console.log(`res equals`, res);
-                expect(res).to.have.status(200);
-            });
+    //     it('should respond with JSON array', function (done) {
+    //         return chai.request(app)
+    //             .get('/api/destinations')
+    //             .set('Authorization', 'bearer ' + auth.token)
+    //             .expect(200)
+    //             .expect('Content-Type', /json/)
+    //             .end(function (err, res) {
+    //                 if (err) return done(err);
+    //                 res.body.should.be.instanceof(Array);
+    //                 done();
+    //             });
+    //     });
+    // });
+
+    describe('User GET endpoint', function () {
+
+        it('Should return all destinations for the current user', function () {
+            return chai.request(app)
+                .get('/api/destinations')
+                .set('Authorization', 'bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoidGVzdCIsIm5hbWUiOiJUZXN0In0sImlhdCI6MTUyOTY1ODU0MywiZXhwIjoxNTMwMjYzMzQzLCJzdWIiOiJ0ZXN0In0.fkB_PLkAADlAXH7nnV9C6rJzPOR8QiV64uL6dA0XRNA')
+                .then(function (res) {
+                    expect(res).to.have.status(200);
+                    expect(res).to.be.a('object');
+                    expect(res.body).to.have.length.of.at.least(1);
+                //     return Destination.count();
+                // })
+                // .then(function (count) {
+                //     expect(res.body).to.have.length.of(count);
+                })
+        })
+
     });
-    // }
-});
+})
+
+//     describe('Public GET endpoint', function () {
+
+//         it('Should return all published destinations', function () {
+//             return chai.request(app)
+//                 .get('/api/destinations/public')
+//                  .set('Authorization', 'bearer ' + auth.token)
+//                 .then(function (res) {
+//                     console.log(`res equals`, res);
+//                     expect(res).to.have.status(200);
+//                     expect(res).to.be.a.('array');
+//                     expect(res.body).to.have.length.of.at.least(1);
+//                     return Destination.count();
+//                 })
+//                 .then(function (count) {
+//                     expect(res.body).to.have.length.of(count);
+//                 })
+//         });
+
+//     });
+
+
+//     describe('User POST endpoint', function () {
+
+
+//         it('Should create a new destination for user on POST', function () {
+//             const newDestination = generateDestinationData();
+
+//             return chai.request(app)
+//                 .post('/destinations')
+//                 .set('Authorization', 'bearer ' + auth.token)
+//                 .send(newDestination)
+//                 .then(function (res) {
+//                     expect(res).to.have.status(201);
+//                     expect(res).to.be.json;
+//                     expect(res).to.be.a('object');
+//                     expect(res.body).to.include.keys(
+//                         'id', 'name', 'published', 'activities'
+//                     );
+//                     expect(res.body.name).to.equal(newDestination.name);
+//                     expect(res.body.published).to.equal(newDestination.name);
+//                     expect(res.body.activity).to.be.a('array');
+//                     expect(res.body.activities).to.equal(newDestination.activities);
+
+//                 });
+//         });
+
+//     });
+
+// });
