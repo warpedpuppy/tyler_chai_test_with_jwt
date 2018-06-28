@@ -4,7 +4,9 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
 const mongoose = require('mongoose');
-var request = require('supertest');
+const request = require('supertest');
+
+const auth = {};
 
 const expect = chai.expect;
 
@@ -96,63 +98,48 @@ function tearDownDb() {
     return mongoose.connection.dropDatabase();
 }
 
-// var authenticatedUser = request.agent(app);
-
-// var auth = {};
-
 function getToken(auth) {
-    return function (done) {
-        request
-            .post('/auth/local')
+        return chai.request(app)
+            .post('/api/auth/login')
             .send(userCredentials)
-            .expect(200)
-            .end(onResponse);
-
-        function onResponse(err, res) {
-            auth.token = res.body.token;
-            return done();
-        }
-    };
+            .then(function(res){
+                auth = {};
+                auth.token = res.body.authToken;
+                console.log('auth', auth);
+                return auth;
+            })
 }
 
-let auth = {};
-
 function registerAndGetToken() {
+
     chai.request(app)
         .post('/api/users')
         .send(userCredentials)
-        .then(function(res){
-            console.log(`res`, res);
-            auth.token = res.body.authToken;
-        })
-        .done(function() {
+        .then(function (res) {
+            console.log(res.body);
             getToken();
         })
-        .catch(function(err) {
+        .catch(function (err) {
+            getToken();
             console.log(err);
         })
-    }
+}
 
 describe('Destination Diary API', function () {
 
+
     before(function () {
-        //     request
-        //         .post('api/auth/login')
-        //         .send(userCredentials)
-        //         .end(function (err, response) {
-        //             expect(response.statusCode).to.equal(200);
-        //             done();
-        //         });
 
-            // before(loginUser(auth));
-            registerAndGetToken();
-            console.log(`auth.token`, auth.token);
+        tearDownDb();
 
-            // console.log(auth.token);
-            // auth.token = res.body.token;
+        registerAndGetToken();
+        // console.log(`auth.token`, auth.token);
 
-            return runServer(TEST_DATABASE_URL);
-        });
+        // console.log(auth.token);
+        // auth.token = res.body.token;
+
+        return runServer(TEST_DATABASE_URL);
+    });
     beforeEach(function () {
         return seedDestinationData();
     })
@@ -189,10 +176,10 @@ describe('Destination Diary API', function () {
                     expect(res).to.have.status(200);
                     expect(res).to.be.a('object');
                     expect(res.body).to.have.length.of.at.least(1);
-                //     return Destination.count();
-                // })
-                // .then(function (count) {
-                //     expect(res.body).to.have.length.of(count);
+                    //     return Destination.count();
+                    // })
+                    // .then(function (count) {
+                    //     expect(res.body).to.have.length.of(count);
                 })
         })
 
