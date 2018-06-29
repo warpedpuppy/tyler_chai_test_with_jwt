@@ -9,15 +9,24 @@ const config = require('../config');
 const router = express.Router();
 
 const createAuthToken = function (user) {
+  console.log("createAuthToken has been hit")
   return jwt.sign({ user }, config.JWT_SECRET, {
     subject: user.username,
     expiresIn: config.JWT_EXPIRY,
     algorithm: 'HS256'
   });
 };
+router.createAuthToken = createAuthToken;
 
 const localAuth = passport.authenticate('local', { session: false });
 router.use(bodyParser.json());
+
+router.post('/login-test', (req, res) => {
+  console.log('login-test ')
+  // const authToken = createAuthToken(req.user.serialize());
+  // const jwtAuth = passport.authenticate('jwt', { session: false });
+  // res.json({ authToken, user: req.user });
+});
 
 router.post('/login', localAuth, (req, res) => {
   const authToken = createAuthToken(req.user.serialize());
@@ -38,4 +47,4 @@ router.get('/app_protected', jwtAuth, (req, res) => {
   res.json({ authToken });
 });
 
-module.exports = { router };
+module.exports = { router, createAuthToken };
